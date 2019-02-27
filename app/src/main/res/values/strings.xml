@@ -1,0 +1,20 @@
+<resources>
+    <string name="app_name" translatable="false">HDOpen</string>
+
+    <string name="open_info" translatable="false">Open Info</string>
+    <string name="fetch_service" translatable="false">Status getting service for OpenHD</string>
+    <string name="info_button" translatable="false">Info button</string>
+    <string name="intro_name" translatable="false">App Intro</string>
+
+    <string name="open">Open</string>
+    <string name="undefined">Undefined</string>
+    <string name="closed">Closed</string>
+    <string name="updated">Updated Status!</string>
+    <string name="last_updated">Last updated: %s</string>
+    <string name="new_version">A new version is available</string>
+    <string name="version_info">Current version: %s\nNew version: %s\n\nChangelog:\n%s</string>
+    <string name="download_button">Download</string>
+    <string name="close">Close</string>
+
+
+</resources>

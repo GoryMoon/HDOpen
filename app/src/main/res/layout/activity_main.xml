@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/background"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/undefined"
+    tools:context="se.gorymoon.hdopen.MainActivity" >
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:text="@string/undefined"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="36sp"
+            app:layout_constraintBottom_toTopOf="@+id/guideline" />
+
+        <androidx.constraintlayout.widget.Guideline
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/guideline"
+            android:orientation="horizontal"
+            app:layout_constraintGuide_percent="0.5" />
+
+        <TextView
+            android:id="@+id/updated"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            app:layout_constraintTop_toTopOf="@+id/guideline" />
+
+        <ProgressBar
+            style="@android:style/Widget.DeviceDefault.ProgressBar.Small"
+            android:id="@+id/progressBar"
+            android:layout_width="48dp"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:visibility="invisible"
+            android:indeterminateTint="@color/white"
+            app:layout_constraintBottom_toTopOf="@+id/status"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <com.rodolfonavalon.shaperipplelibrary.ShapeRipple
+            android:id="@+id/ripple"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            custom:enable_single_ripple="true"
+            custom:ripple_duration="1800"
+            custom:ripple_stroke_width="10dp" />
+
+        <ImageView
+            android:id="@+id/info_button"
+            android:layout_width="52dp"
+            android:layout_height="52dp"
+            android:layout_marginTop="24dp"
+            android:layout_marginEnd="24dp"
+            android:contentDescription="@string/info_button"
+            android:visibility="invisible"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:srcCompat="@drawable/ic_info_white_24dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</FrameLayout>
