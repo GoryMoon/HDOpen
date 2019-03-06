@@ -10,6 +10,8 @@ import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
+import java.util.Arrays;
+
 import se.gorymoon.hdopen.R;
 import se.gorymoon.hdopen.network.StatusRepository;
 import se.gorymoon.hdopen.status.Status;
@@ -83,6 +85,7 @@ public class WidgetOpenProvider extends AppWidgetProvider {
     @Override
     public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
         // There may be multiple widgets active, so update all of them
+        Timber.d("App ids: %s", Arrays.toString(appWidgetIds));
         for (int appWidgetId : appWidgetIds) {
             updateAppWidget(context, appWidgetManager, appWidgetId, appWidgetIds, false);
         }

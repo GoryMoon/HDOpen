@@ -9,6 +9,7 @@ import com.crashlytics.android.Crashlytics;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import se.gorymoon.hdopen.work.Boot;
 import timber.log.Timber;
 
 public class App extends Application {
@@ -22,6 +23,7 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        Boot.addCheckWork();
 
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());
@@ -35,11 +37,11 @@ public class App extends Application {
 
         @Override
         protected void log(int priority, @Nullable String tag, @NotNull String message, @Nullable Throwable t) {
-            Crashlytics.log(message);
-            if (priority == Log.VERBOSE || priority == Log.DEBUG) {
+            if (priority == Log.VERBOSE || priority == Log.DEBUG || priority == Log.ASSERT) {
                 return;
             }
 
+            Crashlytics.log(message);
             if (t != null) {
                 Crashlytics.logException(t);
             }

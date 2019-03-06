@@ -4,12 +4,15 @@ import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 
-import com.android.volley.VolleyError;
+import org.json.JSONObject;
+
+import java.util.concurrent.CancellationException;
+import java.util.concurrent.ExecutionException;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.JobIntentService;
+import java9.util.concurrent.CompletableFuture;
 import se.gorymoon.hdopen.network.StatusRepository;
-import se.gorymoon.hdopen.status.Status;
 import timber.log.Timber;
 
 public class RemoteFetchService extends JobIntentService {
@@ -30,13 +33,17 @@ public class RemoteFetchService extends JobIntentService {
             appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, AppWidgetManager.INVALID_APPWIDGET_ID);
             appWidgetIds = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
 
-            StatusRepository.getInstance().addListener("widget", this::success);
-            StatusRepository.getInstance().addErrorListener("widget", this::onErrorResponse);
             Timber.d("Requesting data");
-            StatusRepository.getInstance().refreshData();
-        } else {
-            populateWidget();
+            try {
+                CompletableFuture<JSONObject> future = StatusRepository.getInstance().refreshData();
+                future.get();
+            } catch (InterruptedException e) {
+                Timber.v(e, "Error getting the future of widget update");
+            } catch (ExecutionException e) {
+                Timber.v(e, "Error getting the future of widget update");
+            } catch (CancellationException ignored) {}
         }
+        populateWidget();
     }
 
     @Override
@@ -59,15 +66,6 @@ public class RemoteFetchService extends JobIntentService {
         sendBroadcast(widgetUpdateIntent);
 
         this.stopSelf();
-    }
-
-    private void onErrorResponse(VolleyError error) {
-        populateWidget();
-    }
-
-    private void success(Status status, String update) {
-        Timber.d("Got response from server: %s %s", status.name(), update);
-        populateWidget();
     }
 }
 

@@ -1,4 +1,4 @@
-package se.gorymoon.hdopen;
+package se.gorymoon.hdopen.activities;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,7 +10,8 @@ import android.os.PersistableBundle;
 import com.github.paolorotolo.appintro.AppIntro;
 
 import androidx.annotation.Nullable;
-import se.gorymoon.hdopen.notification.VersionHandler;
+import se.gorymoon.hdopen.handlers.VersionHandler;
+import se.gorymoon.hdopen.utils.PrefHandler;
 import timber.log.Timber;
 
 public class IntroActivity extends AppIntro {

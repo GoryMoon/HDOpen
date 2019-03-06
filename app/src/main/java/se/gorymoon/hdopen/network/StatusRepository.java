@@ -9,9 +9,11 @@ import org.json.JSONObject;
 
 import java.util.concurrent.ConcurrentHashMap;
 
-import se.gorymoon.hdopen.status.ErrorListener;
+import java9.util.concurrent.CompletableFuture;
+import java9.util.function.BiConsumer;
+import java9.util.function.Consumer;
+import java9.util.stream.Stream;
 import se.gorymoon.hdopen.status.Status;
-import se.gorymoon.hdopen.status.StatusListener;
 import timber.log.Timber;
 
 public class StatusRepository {
@@ -20,13 +22,14 @@ public class StatusRepository {
 
     private static final String REMOTE_JSON_URL = "https://hd.chalmers.se/getstatus";
 
-    private ConcurrentHashMap<String, StatusListener> listeners = new ConcurrentHashMap<>();
-    private ConcurrentHashMap<String, ErrorListener> errorListeners = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, BiConsumer<Status, String>> listeners = new ConcurrentHashMap<>();
+    private ConcurrentHashMap<String, Consumer<VolleyError>> errorListeners = new ConcurrentHashMap<>();
 
     private Status status = Status.UNDEFINED;
     private String updateMessage;
 
     private static final Object REQ_TAG = new Object();
+    private CompletableFuture<JSONObject> refreshFuture;
 
     public static StatusRepository getInstance() {
         if (instance == null) {
@@ -35,11 +38,11 @@ public class StatusRepository {
         return instance;
     }
 
-    public void addListener(String id, StatusListener listener) {
+    public void addListener(String id, BiConsumer<Status, String> listener) {
         listeners.put(id, listener);
     }
 
-    public void addErrorListener(String id, ErrorListener listener) {
+    public void addErrorListener(String id, Consumer<VolleyError> listener) {
         errorListeners.put(id, listener);
     }
 
@@ -51,29 +54,35 @@ public class StatusRepository {
         errorListeners.remove(id);
     }
 
-    public void refreshData() {
+    public CompletableFuture<JSONObject> refreshData() {
         Timber.d("Requesting data");
         JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, REMOTE_JSON_URL, null, this::onSuccess, this::error);
         request.setShouldCache(false);
         request.setTag(REQ_TAG);
         RequestSingleton.getInstance().addToRequestQueue(request);
+
+        cancelFuture(null);
+        refreshFuture = new CompletableFuture<>();
+        return refreshFuture;
     }
 
     private void error(VolleyError error) {
-        Timber.e(error);
-
-        for (ErrorListener listener: errorListeners.values()) {
-            listener.onError(error);
-        }
+        Timber.v(error);
+        cancelFuture(null);
+        //noinspection unchecked
+        Stream.of(errorListeners.values().toArray(new Consumer[0])).forEach(consumer -> consumer.accept(error));
     }
 
     public void stopRequest() {
         RequestSingleton.getInstance().getRequestQueue().cancelAll(REQ_TAG);
-        onSuccess(new JSONObject());
+        //noinspection unchecked
+        Stream.of(listeners.values().toArray(new BiConsumer[0])).forEach(consumer -> consumer.accept(status, updateMessage));
     }
 
     private void onSuccess(JSONObject json) {
+        Timber.d(json.toString());
         if (json.has("status")) {
+            cancelFuture(json);
             try {
                 int status = json.optInt("status", -1);
                 this.status = status == 0 ? Status.CLOSED: status == 1 ? Status.OPEN: Status.UNDEFINED;
@@ -84,12 +93,19 @@ public class StatusRepository {
                 Timber.wtf(e, "An error occurred while getting values. Possible API change?");
             }
         } else {
+            cancelFuture(null);
             this.status = Status.UNDEFINED;
             this.updateMessage = "";
         }
 
-        for (StatusListener listener: listeners.values()) {
-            listener.accept(status, updateMessage);
+        //noinspection unchecked
+        Stream.of(listeners.values().toArray(new BiConsumer[0])).forEach(consumer -> consumer.accept(status, updateMessage));
+    }
+
+    private void cancelFuture(JSONObject json) {
+        if (refreshFuture != null && !refreshFuture.isDone() && !refreshFuture.isCancelled()) {
+            refreshFuture.complete(json);
+            refreshFuture = null;
         }
     }
 

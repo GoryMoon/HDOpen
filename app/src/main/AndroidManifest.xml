@@ -4,17 +4,17 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
     <application
+        android:name=".App"
         android:allowBackup="true"
+        android:fullBackupContent="@xml/backup_descriptor"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:name="se.gorymoon.hdopen.App"
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme"
-        android:fullBackupContent="@xml/backup_descriptor">
-
+        android:theme="@style/AppTheme">
 
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_icon"
@@ -23,19 +23,18 @@
             android:name="com.google.firebase.messaging.default_notification_color"
             android:resource="@color/colorAccent" />
 
-        <activity android:name="se.gorymoon.hdopen.MainActivity">
+        <activity android:name=".activities.MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
         <activity
-            android:name="se.gorymoon.hdopen.IntroActivity"
-            android:label="@string/intro_name"/>
+            android:name=".activities.IntroActivity"
+            android:label="@string/intro_name" />
 
-        <receiver android:name="se.gorymoon.hdopen.widget.WidgetOpenProvider">
+        <receiver android:name=".widget.WidgetOpenProvider">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="se.gorymoon.openhd.DATA_FETCHED" />
@@ -45,12 +44,13 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget_info" />
         </receiver>
+
         <service
-            android:name="se.gorymoon.hdopen.widget.RemoteFetchService"
+            android:name=".widget.RemoteFetchService"
             android:icon="@drawable/green_button"
             android:label="@string/fetch_service"
-            android:permission="android.permission.BIND_JOB_SERVICE"></service>
-        <service android:name="se.gorymoon.hdopen.notification.MessageHandler">
+            android:permission="android.permission.BIND_JOB_SERVICE" />
+        <service android:name=".handlers.MessageHandler">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>

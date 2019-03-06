@@ -119,5 +119,3 @@ fabric.properties
 # Editor-based Rest Client
 .idea/httpRequests
 .DS_Store
-app/.DS_Store
-app/.gitignore

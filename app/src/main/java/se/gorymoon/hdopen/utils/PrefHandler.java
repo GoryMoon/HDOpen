@@ -1,9 +1,12 @@
-package se.gorymoon.hdopen;
+package se.gorymoon.hdopen.utils;
 
 import android.content.Context;
 import android.content.SharedPreferences;
 
 import java.util.Set;
+
+import se.gorymoon.hdopen.App;
+import se.gorymoon.hdopen.status.Status;
 
 public class PrefHandler {
 
@@ -66,11 +69,13 @@ public class PrefHandler {
         private static final PrefGetter<Long> LONG_GETTER = (pref, defaultVal, preferences) -> preferences.getLong(pref.key, defaultVal);
         private static final PrefSetter<Long> LONG_SETTER = (pref, val, preferences) -> preferences.apply(preferences.edit().putLong(pref.key, val));
 
-
+        private static final PrefGetter<Status> STATUS_GETTER = (pref, defaultVal, preferences) -> Status.getFromId(preferences.getInt(pref.key, defaultVal.getId()));
+        private static final PrefSetter<Status> STATUS_SETTER = (pref, val, preferences) -> preferences.apply(preferences.edit().putInt(pref.key, val.getId()));
 
         public static final Pref<String> REMOTE_VERSION = new Pref<>("remote_version", STRING_GETTER, STRING_SETTER);
         public static final Pref<Set<String>> CHANGELOG = new Pref<>("changelog", STRING_SET_GETTER, STRING_SET_SETTER);
         public static final Pref<Boolean> FIRST_RUN = new Pref<>("first_run", BOOLEAN_GETTER, BOOLEAN_SETTER);
+        public static final Pref<Status> STATUS = new Pref<>("status", STATUS_GETTER, STATUS_SETTER);
 
         private String key;
         private PrefGetter<E> internalGetter;

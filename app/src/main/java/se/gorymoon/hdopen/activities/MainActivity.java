@@ -1,4 +1,4 @@
-package se.gorymoon.hdopen;
+package se.gorymoon.hdopen.activities;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -26,13 +26,13 @@ import butterknife.Unbinder;
 import it.sephiroth.android.library.xtooltip.ClosePolicy;
 import it.sephiroth.android.library.xtooltip.Tooltip;
 import kotlin.Unit;
+import se.gorymoon.hdopen.R;
+import se.gorymoon.hdopen.handlers.VersionHandler;
 import se.gorymoon.hdopen.network.StatusRepository;
-import se.gorymoon.hdopen.notification.VersionChangeListener;
-import se.gorymoon.hdopen.notification.VersionHandler;
 import se.gorymoon.hdopen.status.Status;
 import timber.log.Timber;
 
-public class MainActivity extends AppCompatActivity implements VersionChangeListener {
+public class MainActivity extends AppCompatActivity {
 
     private static final String DOWNLOAD_URL = "https://gorymoon.se/hdopen";
 
@@ -79,7 +79,7 @@ public class MainActivity extends AppCompatActivity implements VersionChangeList
             }
 
             new Handler().post(() -> {
-                VersionHandler.setListener(this);
+                VersionHandler.setListener(this::onVersionChange);
                 if (VersionHandler.isOutdated()) {
                     onVersionChange(VersionHandler.getRemoteVersion());
                 }
@@ -147,8 +147,7 @@ public class MainActivity extends AppCompatActivity implements VersionChangeList
         }
     }
 
-    @Override
-    public void onVersionChange(Semver newVersion) {
+    private void onVersionChange(Semver newVersion) {
         this.remoteVersion = newVersion;
         new Handler(Looper.getMainLooper()).post(this::updateVersionInfo);
     }

@@ -1,9 +1,8 @@
-package se.gorymoon.hdopen.notification;
+package se.gorymoon.hdopen.handlers;
 
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
-import com.crashlytics.android.Crashlytics;
 import com.vdurmont.semver4j.Semver;
 
 import org.json.JSONArray;
@@ -12,16 +11,17 @@ import org.json.JSONException;
 import java.util.HashSet;
 import java.util.Set;
 
+import java9.util.function.Consumer;
 import se.gorymoon.hdopen.App;
-import se.gorymoon.hdopen.MainActivity;
-import se.gorymoon.hdopen.PrefHandler;
+import se.gorymoon.hdopen.activities.MainActivity;
+import se.gorymoon.hdopen.utils.PrefHandler;
 import timber.log.Timber;
 
-public class VersionHandler {
+public final class VersionHandler {
 
     private VersionHandler() {}
 
-    private static VersionChangeListener listener;
+    private static Consumer<Semver> listener;
     private static Semver localVersion;
 
     public static void handleVersionMessage(String version, String changelogJson) {
@@ -39,9 +39,7 @@ public class VersionHandler {
                 changelog.add(jsonArray.getString(i));
             }
         } catch (JSONException e) {
-            Timber.e(e, "Error parsing changelog");
-            Crashlytics.log("Error parsing changelog");
-            Crashlytics.logException(e);
+            Timber.v(e, "Error parsing changelog");
         }
 
         PrefHandler.getInstance().startBulk();
@@ -52,7 +50,7 @@ public class VersionHandler {
         //Outdated version
         if (localVersion != null && localVersion.isLowerThan(remoteVersion)) {
             if (listener != null) {
-                listener.onVersionChange(remoteVersion);
+                listener.accept(remoteVersion);
             }
             Timber.i("Version Outdated (Local < Remote): %s < %s", localVersion.toString(), remoteVersion.toString());
         }
@@ -64,9 +62,7 @@ public class VersionHandler {
             PackageInfo packageInfo = App.getInstance().getPackageManager().getPackageInfo(App.getInstance().getPackageName(), 0);
             localVersion = new Semver(packageInfo.versionName);
         } catch (PackageManager.NameNotFoundException e) {
-            Timber.e(e, "Error getting local-version");
-            Crashlytics.log("Error getting local-version");
-            Crashlytics.logException(e);
+            Timber.v(e, "Error getting local-version");
         }
         return localVersion;
     }
@@ -101,7 +97,7 @@ public class VersionHandler {
         return false;
     }
 
-    public static void setListener(VersionChangeListener listener) {
+    public static void setListener(Consumer<Semver> listener) {
         VersionHandler.listener = listener;
     }
 }

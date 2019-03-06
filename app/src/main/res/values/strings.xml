@@ -6,6 +6,10 @@
     <string name="info_button" translatable="false">Info button</string>
     <string name="intro_name" translatable="false">App Intro</string>
 
+    <string name="channel_name">HDOpen notifications</string>
+    <string name="channel_description">Channel for HDOpen notifications</string>
+
+
     <string name="open">Open</string>
     <string name="undefined">Undefined</string>
     <string name="closed">Closed</string>

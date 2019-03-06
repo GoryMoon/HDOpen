@@ -1,4 +1,4 @@
-package se.gorymoon.hdopen.notification;
+package se.gorymoon.hdopen.handlers;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;

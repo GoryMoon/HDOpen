@@ -9,4 +9,6 @@
     <string name="version_info">Nuvarande version: %s\nNy version: %s\n\nChangelog:\n%s</string>
     <string name="download_button">Ladda ner</string>
     <string name="close">Stäng</string>
+    <string name="channel_description">Kanal för HDOpen notifikationer</string>
+    <string name="channel_name">HDOpen notifikationer</string>
 </resources>
