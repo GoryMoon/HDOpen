@@ -58,8 +58,8 @@ public class CheckWorker extends Worker {
             NotificationHandler.sendNotification(
                     getApplicationContext().getString(status.getStatus()),
                     updateMessage,
-                    getApplicationContext().getResources().getColor(status.getColor())
-            );
+                    getApplicationContext().getResources().getColor(status.getColor()),
+                    "");
         }
         return Result.success();
     }

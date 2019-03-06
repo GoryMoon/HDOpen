@@ -4,8 +4,6 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
-import android.media.RingtoneManager;
-import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
 
@@ -21,10 +19,11 @@ import timber.log.Timber;
 public final class NotificationHandler {
 
     private static final String CHANNEL_ID = "se.gorymoon.hdopen.general";
+    public static final String NOTIFICATION_EXTRA = "se.gorymoon.hdopen.notification";
 
     private NotificationHandler() {}
 
-    public static void sendNotification(String title, String text, int rgba) {
+    public static void sendNotification(String title, String text, int rgba, String intentExtra) {
         if (!PrefHandler.Pref.ENABLE_NOTIFICATIONS.get(true)) {
             Timber.d("Not sending any notifications, disabled");
             return;
@@ -33,6 +32,7 @@ public final class NotificationHandler {
 
         Intent intent = new Intent(App.getInstance(), MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.putExtra(NOTIFICATION_EXTRA, intentExtra);
         PendingIntent pi = PendingIntent.getActivity(App.getInstance(), 0, intent, 0);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(App.getInstance(), CHANNEL_ID);

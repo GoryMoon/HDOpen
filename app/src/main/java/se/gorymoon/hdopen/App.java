@@ -5,10 +5,14 @@ import android.app.Application;
 import android.util.Log;
 
 import com.crashlytics.android.Crashlytics;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.vdurmont.semver4j.Semver;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import se.gorymoon.hdopen.handlers.VersionHandler;
+import se.gorymoon.hdopen.utils.PrefHandler;
 import se.gorymoon.hdopen.work.Boot;
 import timber.log.Timber;
 
@@ -24,6 +28,18 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         Boot.addCheckWork();
+        Semver localVersion = VersionHandler.getLocalVersion();
+        if (localVersion != null) {
+            String s = PrefHandler.Pref.LAST_VERSION.get(null);
+            if (s != null) {
+                FirebaseMessaging.getInstance().unsubscribeFromTopic(s);
+            }
+            if (s == null || !localVersion.isEqualTo(s)) {
+                String versionValue = localVersion.getValue();
+                FirebaseMessaging.getInstance().subscribeToTopic(versionValue);
+                PrefHandler.Pref.LAST_VERSION.set(versionValue);
+            }
+        }
 
         if (BuildConfig.DEBUG) {
             Timber.plant(new Timber.DebugTree());

@@ -1,5 +1,6 @@
 package se.gorymoon.hdopen.handlers;
 
+import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
@@ -13,7 +14,7 @@ import java.util.Set;
 
 import java9.util.function.Consumer;
 import se.gorymoon.hdopen.App;
-import se.gorymoon.hdopen.activities.MainActivity;
+import se.gorymoon.hdopen.R;
 import se.gorymoon.hdopen.utils.PrefHandler;
 import timber.log.Timber;
 
@@ -24,10 +25,11 @@ public final class VersionHandler {
     private static Consumer<Semver> listener;
     private static Semver localVersion;
 
+    public static final String NEW_VERSION_TAG = "se.gorymoon.hdopen.new_version";
+
     public static void handleVersionMessage(String version, String changelogJson) {
         if (version == null || changelogJson == null) return;
         Timber.i("Got version info about: %s", version);
-        MainActivity.shouldShowTooltip = true;
 
         Semver remoteVersion = new Semver(version);
         Semver localVersion = getLocalVersion();
@@ -49,6 +51,14 @@ public final class VersionHandler {
 
         //Outdated version
         if (localVersion != null && localVersion.isLowerThan(remoteVersion)) {
+            if (PrefHandler.Pref.NOTIFICATION_VERSION.get(true)) {
+                Context context = App.getInstance().getApplicationContext();
+                NotificationHandler.sendNotification(
+                        context.getString(R.string.new_version),
+                        context.getString(R.string.new_version_description),
+                        context.getResources().getColor(R.color.colorAccent),
+                        NEW_VERSION_TAG);
+            }
             if (listener != null) {
                 listener.accept(remoteVersion);
             }

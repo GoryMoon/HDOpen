@@ -29,6 +29,7 @@ import it.sephiroth.android.library.xtooltip.ClosePolicy;
 import it.sephiroth.android.library.xtooltip.Tooltip;
 import kotlin.Unit;
 import se.gorymoon.hdopen.R;
+import se.gorymoon.hdopen.handlers.NotificationHandler;
 import se.gorymoon.hdopen.handlers.VersionHandler;
 import se.gorymoon.hdopen.network.StatusRepository;
 import se.gorymoon.hdopen.status.Status;
@@ -60,7 +61,7 @@ public class MainActivity extends AppCompatActivity {
     private Tooltip tooltip;
     private Semver remoteVersion;
 
-    public static boolean shouldShowTooltip;
+    public boolean shouldShowTooltip;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,13 +74,12 @@ public class MainActivity extends AppCompatActivity {
         background.postDelayed(() -> {
             Bundle extras = getIntent().getExtras();
             if (extras != null) {
-                String version = extras.getString("version");
-                String changelog = extras.getString("changelog");
-                VersionHandler.handleVersionMessage(version, changelog);
-
+                String string = extras.getString(NotificationHandler.NOTIFICATION_EXTRA);
+                if (string != null && string.equals(VersionHandler.NEW_VERSION_TAG)) {
+                    shouldShowTooltip = true;
+                }
                 Timber.d("Got data: %s", Joiner.on(", ").join(extras.keySet()));
             }
-
             new Handler().post(() -> {
                 VersionHandler.setListener(this::onVersionChange);
                 if (VersionHandler.isOutdated()) {
@@ -183,6 +183,7 @@ public class MainActivity extends AppCompatActivity {
             infoButton.setVisibility(View.VISIBLE);
 
             if (shouldShowTooltip) {
+                shouldShowTooltip = false;
                 tooltip = new Tooltip.Builder(this)
                         .anchor(infoButton, 0, 0, false)
                         .text(R.string.new_version)

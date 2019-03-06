@@ -76,6 +76,7 @@ public class PrefHandler {
         public static final Pref<Set<String>> CHANGELOG = new Pref<>("changelog", STRING_SET_GETTER, STRING_SET_SETTER);
         public static final Pref<Boolean> FIRST_RUN = new Pref<>("first_run", BOOLEAN_GETTER, BOOLEAN_SETTER);
         public static final Pref<Status> STATUS = new Pref<>("status", STATUS_GETTER, STATUS_SETTER);
+        public static final Pref<String> LAST_VERSION = new Pref<>("last_verison", STRING_GETTER, STRING_SETTER);
 
         //Settings
         public static final Pref<Boolean> ENABLE_NOTIFICATIONS = new Pref<>("notifications_new_message", BOOLEAN_GETTER, BOOLEAN_SETTER);
