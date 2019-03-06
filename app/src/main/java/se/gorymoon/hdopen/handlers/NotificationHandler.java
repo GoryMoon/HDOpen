@@ -4,13 +4,19 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Intent;
+import android.media.RingtoneManager;
+import android.net.Uri;
 import android.os.Build;
+import android.provider.Settings;
 
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
+import androidx.core.content.res.ResourcesCompat;
 import se.gorymoon.hdopen.App;
 import se.gorymoon.hdopen.R;
 import se.gorymoon.hdopen.activities.MainActivity;
+import se.gorymoon.hdopen.utils.PrefHandler;
+import timber.log.Timber;
 
 public final class NotificationHandler {
 
@@ -19,6 +25,10 @@ public final class NotificationHandler {
     private NotificationHandler() {}
 
     public static void sendNotification(String title, String text, int rgba) {
+        if (!PrefHandler.Pref.ENABLE_NOTIFICATIONS.get(true)) {
+            Timber.d("Not sending any notifications, disabled");
+            return;
+        }
         createNotificationChannel();
 
         Intent intent = new Intent(App.getInstance(), MainActivity.class);
@@ -33,6 +43,19 @@ public final class NotificationHandler {
                 .setPriority(NotificationCompat.PRIORITY_DEFAULT)
                 .setContentIntent(pi)
                 .setAutoCancel(true);
+
+        if (PrefHandler.Pref.NOTIFICATION_VIBRATE.get(true)) {
+            builder.setVibrate(new long[]{0, 250, 250, 250});
+        }
+        int onOffMs = 0;
+        if (PrefHandler.Pref.NOTIFICATION_LED.get(true)) {
+            onOffMs = 500;
+        }
+        int color = ResourcesCompat.getColor(App.getInstance().getResources(), R.color.colorAccent, null);
+        builder.setLights(color, onOffMs, onOffMs);
+        if (PrefHandler.Pref.NOTIFICATION_SOUND.get(false)) {
+            builder.setSound(Settings.System.DEFAULT_NOTIFICATION_URI);
+        }
 
         if (text != null && !text.isEmpty()) {
             builder.setContentText(text);

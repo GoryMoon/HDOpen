@@ -1,0 +1,69 @@
+<androidx.preference.PreferenceScreen
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory
+        app:key="notifications_title"
+        app:title="@string/pref_notifications">
+        <SwitchPreference
+            app:defaultValue="true"
+            app:key="notifications_new_message"
+            app:title="@string/pref_title_notify"
+            app:summary="@string/pref_summary_notify" />
+
+        <SwitchPreference
+            app:defaultValue="true"
+            app:dependency="notifications_new_message"
+            app:key="notifications_vibrate"
+            app:title="@string/pref_title_vibrate"
+            app:summary="@string/pref_summary_vibrate" />
+
+        <SwitchPreference
+            app:defaultValue="true"
+            app:dependency="notifications_new_message"
+            app:key="notifications_led"
+            app:title="@string/pref_title_led"
+            app:summary="@string/pref_summary_led" />
+
+        <SwitchPreference
+            app:defaultValue="false"
+            app:dependency="notifications_new_message"
+            app:key="notifications_sound"
+            app:title="@string/pref_title_sound"
+            app:summary="@string/pref_summary_sound" />
+
+
+
+        <SwitchPreference
+            app:defaultValue="true"
+            app:dependency="notifications_new_message"
+            app:key="notifications_version"
+            app:title="@string/pref_title_version"
+            app:summary="@string/pref_summary_version" />
+
+        <SwitchPreference
+            app:defaultValue="false"
+            app:dependency="notifications_new_message"
+            app:key="notifications_status"
+            app:title="@string/pref_title_status"
+            app:summary="@string/pref_summary_status" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:key="about_title"
+        app:title="@string/pref_about">
+        <!--<Preference
+            app:key="feedback"
+            app:title="Send feedback"
+            app:summary="Report technical issues or suggest new features"/>-->
+        <Preference
+            app:key="version"
+            app:title="@string/pref_version_build"
+            app:summary="?"/>
+        <Preference
+            app:key="libraries"
+            app:title="@string/pref_libraries" />
+
+    </PreferenceCategory>
+
+
+</androidx.preference.PreferenceScreen>

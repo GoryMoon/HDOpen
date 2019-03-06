@@ -54,12 +54,13 @@ public class CheckWorker extends Worker {
         String updateMessage = StatusRepository.getInstance().getUpdateMessage();
         Timber.d("Changed status, showing notification");
 
-        NotificationHandler.sendNotification(
-                getApplicationContext().getString(status.getStatus()),
-                updateMessage,
-                getApplicationContext().getResources().getColor(status.getColor())
-        );
-
+        if (PrefHandler.Pref.NOTIFICATION_STATUS.get(false)) {
+            NotificationHandler.sendNotification(
+                    getApplicationContext().getString(status.getStatus()),
+                    updateMessage,
+                    getApplicationContext().getResources().getColor(status.getColor())
+            );
+        }
         return Result.success();
     }
 }

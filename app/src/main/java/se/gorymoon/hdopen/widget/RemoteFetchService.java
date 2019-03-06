@@ -41,7 +41,9 @@ public class RemoteFetchService extends JobIntentService {
                 Timber.v(e, "Error getting the future of widget update");
             } catch (ExecutionException e) {
                 Timber.v(e, "Error getting the future of widget update");
-            } catch (CancellationException ignored) {}
+            } catch (CancellationException e) {
+                Timber.d(e, "Error getting the future of widget update");
+            }
         }
         populateWidget();
     }

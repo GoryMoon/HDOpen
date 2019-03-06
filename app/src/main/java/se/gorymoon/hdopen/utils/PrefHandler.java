@@ -77,6 +77,14 @@ public class PrefHandler {
         public static final Pref<Boolean> FIRST_RUN = new Pref<>("first_run", BOOLEAN_GETTER, BOOLEAN_SETTER);
         public static final Pref<Status> STATUS = new Pref<>("status", STATUS_GETTER, STATUS_SETTER);
 
+        //Settings
+        public static final Pref<Boolean> ENABLE_NOTIFICATIONS = new Pref<>("notifications_new_message", BOOLEAN_GETTER, BOOLEAN_SETTER);
+        public static final Pref<Boolean> NOTIFICATION_VIBRATE = new Pref<>("notifications_vibrate", BOOLEAN_GETTER, BOOLEAN_SETTER);
+        public static final Pref<Boolean> NOTIFICATION_LED = new Pref<>("notifications_led", BOOLEAN_GETTER, BOOLEAN_SETTER);
+        public static final Pref<Boolean> NOTIFICATION_SOUND = new Pref<>("notifications_sound", BOOLEAN_GETTER, BOOLEAN_SETTER);
+        public static final Pref<Boolean> NOTIFICATION_VERSION = new Pref<>("notifications_version", BOOLEAN_GETTER, BOOLEAN_SETTER);
+        public static final Pref<Boolean> NOTIFICATION_STATUS = new Pref<>("notifications_status", BOOLEAN_GETTER, BOOLEAN_SETTER);
+
         private String key;
         private PrefGetter<E> internalGetter;
         private PrefSetter<E> internalSetter;
