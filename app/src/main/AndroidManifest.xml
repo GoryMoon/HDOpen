@@ -58,7 +58,7 @@
             android:icon="@drawable/green_button"
             android:label="@string/fetch_service"
             android:permission="android.permission.BIND_JOB_SERVICE" />
-        <service android:name=".handlers.MessageHandler">
+        <service android:name=".utils.MessageHandler">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>

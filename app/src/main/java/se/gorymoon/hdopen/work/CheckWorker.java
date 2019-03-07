@@ -11,9 +11,9 @@ import androidx.annotation.NonNull;
 import androidx.work.Worker;
 import androidx.work.WorkerParameters;
 import java9.util.concurrent.CompletableFuture;
-import se.gorymoon.hdopen.handlers.NotificationHandler;
 import se.gorymoon.hdopen.network.StatusRepository;
 import se.gorymoon.hdopen.status.Status;
+import se.gorymoon.hdopen.utils.NotificationHandler;
 import se.gorymoon.hdopen.utils.PrefHandler;
 import timber.log.Timber;
 
@@ -52,7 +52,7 @@ public class CheckWorker extends Worker {
         }
         PrefHandler.Pref.STATUS.set(status);
         String updateMessage = StatusRepository.getInstance().getUpdateMessage();
-        Timber.d("Changed status, showing notification");
+        Timber.d("Changed status, showing notification: %s %s", status, updateMessage);
 
         if (PrefHandler.Pref.NOTIFICATION_STATUS.get(false)) {
             NotificationHandler.sendNotification(

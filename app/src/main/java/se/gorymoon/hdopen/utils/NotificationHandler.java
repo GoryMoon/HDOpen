@@ -1,4 +1,4 @@
-package se.gorymoon.hdopen.handlers;
+package se.gorymoon.hdopen.utils;
 
 import android.app.NotificationChannel;
 import android.app.NotificationManager;
@@ -13,7 +13,6 @@ import androidx.core.content.res.ResourcesCompat;
 import se.gorymoon.hdopen.App;
 import se.gorymoon.hdopen.R;
 import se.gorymoon.hdopen.activities.MainActivity;
-import se.gorymoon.hdopen.utils.PrefHandler;
 import timber.log.Timber;
 
 public final class NotificationHandler {

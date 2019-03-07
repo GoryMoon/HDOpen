@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceFragmentCompat;
 import se.gorymoon.hdopen.BuildConfig;
 import se.gorymoon.hdopen.R;
+import se.gorymoon.hdopen.utils.PrefHandler;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -23,6 +24,8 @@ public class SettingsActivity extends AppCompatActivity {
 
         @Override
         public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
+            getPreferenceManager().setSharedPreferencesName(PrefHandler.PREF_NAME);
+
             setPreferencesFromResource(R.xml.pref_notification, rootKey);
             findPreference("version").setSummaryProvider(preference -> BuildConfig.VERSION_NAME);
             findPreference("libraries").setOnPreferenceClickListener(preference -> {

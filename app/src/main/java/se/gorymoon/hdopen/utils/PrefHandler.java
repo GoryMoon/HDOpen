@@ -15,8 +15,10 @@ public class PrefHandler {
     private boolean bulk;
     private SharedPreferences.Editor editor;
 
+    public static final String PREF_NAME = "HDOpen";
+
     private PrefHandler() {
-        sharedPreferences = App.getInstance().getSharedPreferences("HDOpen", Context.MODE_PRIVATE);
+        sharedPreferences = App.getInstance().getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
     }
 
     public static PrefHandler getInstance() {
@@ -74,7 +76,7 @@ public class PrefHandler {
 
         public static final Pref<String> REMOTE_VERSION = new Pref<>("remote_version", STRING_GETTER, STRING_SETTER);
         public static final Pref<Set<String>> CHANGELOG = new Pref<>("changelog", STRING_SET_GETTER, STRING_SET_SETTER);
-        public static final Pref<Boolean> FIRST_RUN = new Pref<>("first_run", BOOLEAN_GETTER, BOOLEAN_SETTER);
+        public static final Pref<String> OLD_RUN_VERSION = new Pref<>("first_run", STRING_GETTER, STRING_SETTER);
         public static final Pref<Status> STATUS = new Pref<>("status", STATUS_GETTER, STATUS_SETTER);
         public static final Pref<String> LAST_VERSION = new Pref<>("last_verison", STRING_GETTER, STRING_SETTER);
 

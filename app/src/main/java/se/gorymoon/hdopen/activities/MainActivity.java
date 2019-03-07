@@ -29,10 +29,11 @@ import it.sephiroth.android.library.xtooltip.ClosePolicy;
 import it.sephiroth.android.library.xtooltip.Tooltip;
 import kotlin.Unit;
 import se.gorymoon.hdopen.R;
-import se.gorymoon.hdopen.handlers.NotificationHandler;
-import se.gorymoon.hdopen.handlers.VersionHandler;
 import se.gorymoon.hdopen.network.StatusRepository;
 import se.gorymoon.hdopen.status.Status;
+import se.gorymoon.hdopen.utils.NotificationHandler;
+import se.gorymoon.hdopen.utils.Utils;
+import se.gorymoon.hdopen.version.VersionHandler;
 import timber.log.Timber;
 
 public class MainActivity extends AppCompatActivity {
@@ -66,7 +67,8 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        IntroActivity.checkFirstStart(this);
+        IntroActivity.checkFirstStart(this);
+        Utils.setActionBar(getApplicationContext(), getSupportActionBar());
 
         setContentView(R.layout.activity_main);
         unbinder = ButterKnife.bind(this);

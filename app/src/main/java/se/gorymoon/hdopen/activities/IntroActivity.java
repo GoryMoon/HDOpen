@@ -1,38 +1,78 @@
 package se.gorymoon.hdopen.activities;
 
-import android.content.Context;
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
-import android.os.PersistableBundle;
 
 import com.github.paolorotolo.appintro.AppIntro;
+import com.github.paolorotolo.appintro.AppIntroFragment;
+import com.github.paolorotolo.appintro.model.SliderPage;
+import com.github.paolorotolo.appintro.model.SliderPagerBuilder;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
 
 import androidx.annotation.Nullable;
-import se.gorymoon.hdopen.handlers.VersionHandler;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.fragment.app.Fragment;
+import se.gorymoon.hdopen.R;
 import se.gorymoon.hdopen.utils.PrefHandler;
+import se.gorymoon.hdopen.utils.Utils;
+import se.gorymoon.hdopen.version.VersionHandler;
 import timber.log.Timber;
 
 public class IntroActivity extends AppIntro {
 
-    @Override
-    public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
+    private LinkedHashMap<String, Fragment> updateFragments;
 
+    @Override
+    public void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Utils.setActionBar(getApplicationContext(), getSupportActionBar());
+
+        SliderPage page = new SliderPagerBuilder()
+                .title(getString(R.string.welcome))
+                .titleTypefaceRes(R.font.roboto_light)
+                .description(getString(R.string.welcome_desc))
+                .descTypefaceRes(R.font.roboto_light)
+                .bgColor(ResourcesCompat.getColor(getResources(), R.color.colorPrimaryDark, null))
+                .imageDrawable(R.drawable.splash_logo)
+                .build();
+        addSlide(AppIntroFragment.newInstance(page));
+
+        updateFragments = VersionHandler.getUpdateFragments();
+        for (Fragment fragment: updateFragments.values()) {
+            addSlide(fragment);
+        }
+
+        setBarColor(ResourcesCompat.getColor(getResources(), R.color.colorPrimary, null));
+        showSkipButton(false);
+    }
+
+    @Override
+    public void onDonePressed(Fragment currentFragment) {
+        super.onDonePressed(currentFragment);
+
+        for (Map.Entry<String, Fragment> entry: updateFragments.entrySet()) {
+            VersionHandler.getVersionSetup(entry.getKey()).handleVersion(entry.getValue());
+        }
+        PrefHandler.Pref.OLD_RUN_VERSION.set(null);
+
+        setResult(RESULT_OK, new Intent());
+        finish();
     }
 
 
-    public static void checkFirstStart(Context context) {
+    public static void checkFirstStart(Activity activity) {
         new Thread(() -> {
-            boolean isFirstRun = PrefHandler.Pref.FIRST_RUN.get(true);
+            String oldVersion = PrefHandler.Pref.OLD_RUN_VERSION.get(null);
 
-            if (isFirstRun) {
+            if (oldVersion != null) {
                 Timber.d("First run of this version: %s", VersionHandler.getLocalVersion());
-                final Intent i = new Intent(context, IntroActivity.class);
-                new Handler(Looper.getMainLooper()).post(() -> context.startActivity(i));
-
-                //PrefHandler.Pref.FIRST_RUN.set(false);
+                final Intent i = new Intent(activity, IntroActivity.class);
+                new Handler(Looper.getMainLooper()).post(() -> activity.startActivityForResult(i, 1));
             }
         }).start();
     }

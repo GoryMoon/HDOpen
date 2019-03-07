@@ -1,4 +1,4 @@
-package se.gorymoon.hdopen.handlers;
+package se.gorymoon.hdopen.version;
 
 import android.content.Context;
 import android.content.pm.PackageInfo;
@@ -10,12 +10,17 @@ import org.json.JSONArray;
 import org.json.JSONException;
 
 import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Set;
 
+import androidx.fragment.app.Fragment;
 import java9.util.function.Consumer;
 import se.gorymoon.hdopen.App;
 import se.gorymoon.hdopen.R;
+import se.gorymoon.hdopen.utils.NotificationHandler;
 import se.gorymoon.hdopen.utils.PrefHandler;
+import se.gorymoon.hdopen.version.versions.Version210;
 import timber.log.Timber;
 
 public final class VersionHandler {
@@ -24,6 +29,11 @@ public final class VersionHandler {
 
     private static Consumer<Semver> listener;
     private static Semver localVersion;
+    private static LinkedHashMap<String, IVersionSetup> versionHandler = new LinkedHashMap<>();
+
+    static {
+        versionHandler.put("2.1.0", new Version210());
+    }
 
     public static final String NEW_VERSION_TAG = "se.gorymoon.hdopen.new_version";
 
@@ -67,14 +77,13 @@ public final class VersionHandler {
     }
 
     private static Semver createLocal() {
-        Semver localVersion = null;
         try {
             PackageInfo packageInfo = App.getInstance().getPackageManager().getPackageInfo(App.getInstance().getPackageName(), 0);
-            localVersion = new Semver(packageInfo.versionName);
+            return new Semver(packageInfo.versionName);
         } catch (PackageManager.NameNotFoundException e) {
             Timber.v(e, "Error getting local-version");
         }
-        return localVersion;
+        return new Semver("2.0.0");
     }
 
     public static Semver getLocalVersion() {
@@ -89,7 +98,7 @@ public final class VersionHandler {
         if (remote != null) {
             return new Semver(remote);
         }
-        return null;
+        return new Semver("2.0.0");
     }
 
     public static Set<String> getChangelog() {
@@ -100,7 +109,7 @@ public final class VersionHandler {
     public static boolean isOutdated() {
         final Semver remote = getRemoteVersion();
         final Semver local = getLocalVersion();
-        if (remote != null && local != null) {
+        if (local != null) {
             Timber.d("Comparing two versions: %s and %s", local, remote);
             return local.isLowerThan(remote);
         }
@@ -109,5 +118,38 @@ public final class VersionHandler {
 
     public static void setListener(Consumer<Semver> listener) {
         VersionHandler.listener = listener;
+    }
+
+    public static void handleNewVersion(String s) {
+        if (s == null) {
+            PrefHandler.Pref.OLD_RUN_VERSION.set("2.0.0");
+            return;
+        }
+        Semver oldVersion = new Semver(s);
+        for (String v: versionHandler.keySet()) {
+            if (oldVersion.isLowerThan(v)) {
+                Timber.d("Old version found, showing intro. Version: %s < %s", s, v);
+                PrefHandler.Pref.OLD_RUN_VERSION.set(s);
+                break;
+            }
+        }
+    }
+
+    public static LinkedHashMap<String, Fragment> getUpdateFragments() {
+        LinkedHashMap<String, Fragment> fragments = new LinkedHashMap<>();
+        String s = PrefHandler.Pref.OLD_RUN_VERSION.get(null);
+        Semver oldVersion = s == null ? null: new Semver(s);
+        for (Map.Entry<String, IVersionSetup> entry: versionHandler.entrySet()) {
+            if (oldVersion == null || oldVersion.isLowerThan(entry.getKey())) {
+                fragments.put(entry.getKey(), entry.getValue().getSlideFragment());
+            }
+        }
+        Timber.d("%d intro pages returned", fragments.size());
+
+        return fragments;
+    }
+
+    public static IVersionSetup getVersionSetup(String s) {
+        return versionHandler.get(s);
     }
 }

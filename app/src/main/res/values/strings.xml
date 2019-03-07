@@ -8,6 +8,8 @@
 
     <string name="channel_name">HDOpen notifications</string>
     <string name="channel_description">Channel for HDOpen notifications</string>
+    <string name="welcome">Welcome to HDOpen</string>
+    <string name="welcome_desc">Before starting you need to setup some settings, these can be changed later in the settings menu</string>
 
 
     <string name="open">Open</string>
@@ -43,7 +45,10 @@
     <string name="pref_about">About</string>
     <string name="pref_version_build" translatable="false">App Version</string>
     <string name="pref_libraries">Libraries</string>
-
+    <string name="recommended">Recommended</string>
+    <string name="when">When</string>
+    <string name="opt_in">Opt-in notifications when status changes</string>
+    <string name="recommended_version">Recommended to get new version info</string>
 
 
 </resources>

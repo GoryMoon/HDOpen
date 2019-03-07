@@ -1,8 +1,9 @@
-package se.gorymoon.hdopen.handlers;
+package se.gorymoon.hdopen.utils;
 
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
+import se.gorymoon.hdopen.version.VersionHandler;
 import timber.log.Timber;
 
 public class MessageHandler extends FirebaseMessagingService {
