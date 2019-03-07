@@ -19,7 +19,7 @@ import timber.log.Timber;
 
 public class CheckWorker extends Worker {
 
-    private static int tries = 0;
+    private static int tries = 1;
 
     public CheckWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);
@@ -39,15 +39,15 @@ public class CheckWorker extends Worker {
         } catch (CancellationException ignored) {}
 
         if (jsonObject == null) {
-            tries++;
-            Timber.d("Retrying backgroundwork: #%d", tries);
+            Timber.d("Retrying background work: #%d", tries++);
             return Result.retry();
         }
+        tries = 1;
 
         Status status = StatusRepository.getInstance().getStatus();
         Status storedStatus = PrefHandler.Pref.STATUS.get(Status.UNDEFINED);
-        if (storedStatus == status) {
-            Timber.d("Status not changed, no notification");
+        if (storedStatus == status || status == Status.UNDEFINED) {
+            Timber.d("Status not changed or undefined, no notification");
             return Result.success();
         }
         PrefHandler.Pref.STATUS.set(status);

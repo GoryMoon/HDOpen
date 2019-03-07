@@ -26,7 +26,7 @@
     <string name="pref_title_status">Status</string>
     <string name="pref_summary_status">Visa notifikationer för ändrad staus</string>
     <string name="pref_about">Om</string>
-    <string name="pref_libraries">Bibliotek</string>
+    <string name="pref_libraries">Änvända Bibliotek</string>
     <string name="new_version_description">Klicka för att få info om den nya versionen</string>
     <string name="welcome">Välkommen till HDOpen</string>
     <string name="welcome_desc">Innan du kan starta så måste du bestämma några inställningar, dessa kan ändras senare i inställnings menyn</string>
@@ -34,4 +34,5 @@
     <string name="when">När</string>
     <string name="opt_in">Opt-in notifikationer när status ändras</string>
     <string name="recommended_version">Rekommenderad för ny versions info</string>
+    <string name="aboutLibraries_description_text"><![CDATA[Visar dörr statusen av HDs rum Chassit på Chalmers<br/>skapad av: <b>Gustaf Järgren</b>]]></string>
 </resources>

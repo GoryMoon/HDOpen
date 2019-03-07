@@ -16,7 +16,7 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             proguardFile '/Users/gustaf/AndroidStudioProjects/HDOpen/app/proguard-rules.pro'
         }
@@ -36,6 +36,7 @@ dependencies {
     implementation 'androidx.appcompat:appcompat:1.1.0-alpha02'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     implementation 'androidx.cardview:cardview:1.0.0'
+    implementation "androidx.recyclerview:recyclerview:1.1.0-alpha02"
     implementation 'androidx.vectordrawable:vectordrawable:1.1.0-alpha01'
     implementation 'androidx.constraintlayout:constraintlayout:2.0.0-alpha3'
     implementation 'com.jakewharton:butterknife:10.1.0'
@@ -58,6 +59,8 @@ dependencies {
     implementation 'com.crashlytics.sdk.android:crashlytics:2.9.9'
 
     implementation 'net.sourceforge.streamsupport:android-retrofuture:1.7.0'
+
+    implementation "com.mikepenz:aboutlibraries:6.2.3"
 
     androidTestImplementation('androidx.test.espresso:espresso-core:3.1.2-alpha01', {
         exclude group: 'com.android.support', module: 'support-annotations'

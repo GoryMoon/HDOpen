@@ -34,7 +34,10 @@ public class App extends Application {
             Timber.plant(new ReleaseTree());
         }
 
-        Boot.addCheckWork();
+        if (PrefHandler.Pref.ENABLE_NOTIFICATIONS.get(false)) {
+            Boot.addCheckWork();
+        }
+
         Semver localVersion = VersionHandler.getLocalVersion();
         if (localVersion != null) {
             String s = PrefHandler.Pref.LAST_VERSION.get(null);
