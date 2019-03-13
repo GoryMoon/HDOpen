@@ -46,8 +46,13 @@ public class CheckWorker extends Worker {
 
         Status status = StatusRepository.getInstance().getStatus();
         Status storedStatus = PrefHandler.Pref.STATUS.get(Status.UNDEFINED);
-        if (storedStatus == status || status == Status.UNDEFINED) {
-            Timber.d("Status not changed or undefined, no notification");
+        if (status == Status.UNDEFINED) {
+            Timber.d("Status undefined, retrying quicker");
+            return Result.retry();
+        }
+
+        if (storedStatus == status) {
+            Timber.d("Status not changed, no notification");
             return Result.success();
         }
         PrefHandler.Pref.STATUS.set(status);
