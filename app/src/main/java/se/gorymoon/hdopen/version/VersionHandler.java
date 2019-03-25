@@ -37,7 +37,7 @@ public final class VersionHandler {
 
     public static final String NEW_VERSION_TAG = "se.gorymoon.hdopen.new_version";
 
-    public static void handleVersionMessage(String version, String changelogJson) {
+    public static void handleVersionMessage(String version, JSONArray changelogJson) {
         if (version == null || changelogJson == null) return;
         Timber.i("Got version info about: %s", version);
 
@@ -46,9 +46,8 @@ public final class VersionHandler {
 
         Set<String> changelog = new HashSet<>();
         try {
-            JSONArray jsonArray = new JSONArray(changelogJson);
-            for (int i = 0; i < jsonArray.length(); i++) {
-                changelog.add(jsonArray.getString(i));
+            for (int i = 0; i < changelogJson.length(); i++) {
+                changelog.add(changelogJson.getString(i));
             }
         } catch (JSONException e) {
             Timber.v(e, "Error parsing changelog");
