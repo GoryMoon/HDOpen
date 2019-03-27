@@ -4,7 +4,7 @@
     <string name="closed">Stängt</string>
     <string name="open">Öppet</string>
     <string name="updated">Status Uppdaterat!</string>
-    <string name="last_updated">Senast uppdaterat: %s</string>
+    <string name="last_updated">%s: %s</string>
     <string name="new_version">En ny version är tillgänglig</string>
     <string name="version_info">Nuvarande version: %s\nNy version: %s\n\nChangelog:\n%s</string>
     <string name="download_button">Ladda ner</string>
