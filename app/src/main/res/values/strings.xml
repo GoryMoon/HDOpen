@@ -16,7 +16,7 @@
     <string name="undefined">Undefined</string>
     <string name="closed">Closed</string>
     <string name="updated">Updated Status!</string>
-    <string name="last_updated">Last updated: %s</string>
+    <string name="last_updated">%s: %s</string>
     <string name="new_version_description">Click to get info about the new version</string>
     <string name="new_version">A new version is available</string>
     <string name="version_info">Current version: %s\nNew version: %s\n\nChangelog:\n%s</string>

@@ -45,7 +45,7 @@ public class RemoteFetchService extends JobIntentService {
                 Timber.d(e, "Error getting the future of widget update");
             }
         }
-        populateWidget();
+        populateWidget(intent.getBooleanExtra(WidgetOpenProvider.CLICKED_EXTRA, false));
     }
 
     @Override
@@ -58,12 +58,14 @@ public class RemoteFetchService extends JobIntentService {
      * Method which sends broadcast to WidgetProvider
      * so that widget is notified to do necessary action
      * and here action == WidgetProvider.DATA_FETCHED
+     * @param clicked if the widget where clicked or not
      */
-    private void populateWidget() {
+    private void populateWidget(boolean clicked) {
         Intent widgetUpdateIntent = new Intent(getApplicationContext(), WidgetOpenProvider.class);
         widgetUpdateIntent.setAction(WidgetOpenProvider.DATA_FETCHED);
         widgetUpdateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         widgetUpdateIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
+        widgetUpdateIntent.putExtra(WidgetOpenProvider.CLICKED_EXTRA, clicked);
 
         sendBroadcast(widgetUpdateIntent);
 
