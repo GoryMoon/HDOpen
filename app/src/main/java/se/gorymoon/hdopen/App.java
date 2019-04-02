@@ -38,12 +38,12 @@ public class App extends Application {
             Boot.addCheckWork();
         }
 
+        FirebaseMessaging.getInstance().subscribeToTopic("version");
         Semver localVersion = VersionHandler.getLocalVersion();
         if (localVersion != null) {
             String s = PrefHandler.Pref.LAST_VERSION.get(null);
             if (s == null || !localVersion.isEqualTo(s)) {
                 String versionValue = localVersion.getValue();
-                FirebaseMessaging.getInstance().subscribeToTopic("version");
                 PrefHandler.Pref.LAST_VERSION.set(versionValue);
                 VersionHandler.handleNewVersion(s);
             }

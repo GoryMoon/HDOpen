@@ -14,7 +14,7 @@ import timber.log.Timber;
 
 public class MessageHandler extends FirebaseMessagingService {
 
-    public static final String VERSION_ACTION = "se.gory_moon.hdopen.message.VERSION";
+    public static final String VERSION_ACTION = "se.gory_moon.hdopen.messages.VERSION";
 
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
