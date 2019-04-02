@@ -23,7 +23,7 @@ public class Boot extends BroadcastReceiver {
     }
 
     public static void addCheckWork() {
-        PeriodicWorkRequest.Builder builder = new PeriodicWorkRequest.Builder(CheckWorker.class, 1, TimeUnit.HOURS);
+        PeriodicWorkRequest.Builder builder = new PeriodicWorkRequest.Builder(CheckWorker.class, 15, TimeUnit.MINUTES);
         builder.addTag(WORK_TAG);
         WorkManager.getInstance().enqueueUniquePeriodicWork(WORK_TAG, ExistingPeriodicWorkPolicy.KEEP, builder.build());
     }
