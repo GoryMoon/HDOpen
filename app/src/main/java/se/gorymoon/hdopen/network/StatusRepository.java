@@ -20,7 +20,7 @@ public class StatusRepository {
 
     private static StatusRepository instance;
 
-    private static final String REMOTE_JSON_URL = "https://hd.chalmers.se/getstatus";
+    private static final String REMOTE_JSON_URL = "https://hd.chalmers.se/getstatus/";
 
     private ConcurrentHashMap<String, BiConsumer<Status, String>> listeners = new ConcurrentHashMap<>();
     private ConcurrentHashMap<String, Consumer<VolleyError>> errorListeners = new ConcurrentHashMap<>();

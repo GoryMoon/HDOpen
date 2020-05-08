@@ -1,10 +1,9 @@
 package se.gorymoon.hdopen;
 
-
 import android.app.Application;
 import android.util.Log;
 
-import com.crashlytics.android.Crashlytics;
+import com.google.firebase.crashlytics.FirebaseCrashlytics;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.vdurmont.semver4j.Semver;
 
@@ -58,9 +57,10 @@ public class App extends Application {
                 return;
             }
 
-            Crashlytics.log(message);
+            FirebaseCrashlytics crashlytics = FirebaseCrashlytics.getInstance();
+            crashlytics.log(message);
             if (t != null) {
-                Crashlytics.logException(t);
+                crashlytics.recordException(t);
             }
         }
     }
