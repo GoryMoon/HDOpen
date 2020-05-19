@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 
+import androidx.fragment.app.Fragment;
+
 import com.vdurmont.semver4j.Semver;
 
 import org.json.JSONArray;
@@ -14,7 +16,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 
-import androidx.fragment.app.Fragment;
 import java9.util.function.Consumer;
 import se.gorymoon.hdopen.App;
 import se.gorymoon.hdopen.R;
@@ -65,7 +66,7 @@ public final class VersionHandler {
                 NotificationHandler.sendNotification(
                         context.getString(R.string.new_version),
                         context.getString(R.string.new_version_description),
-                        context.getResources().getColor(R.color.colorAccent),
+                        context.getResources().getColor(R.color.colorCerise),
                         NEW_VERSION_TAG);
             }
             if (listener != null) {

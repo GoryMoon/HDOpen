@@ -51,6 +51,6 @@
     <string name="recommended_version">Recommended to get new version info</string>
 
     <!-- Libraries -->
-    <string name="aboutLibraries_description_text"><![CDATA[Shows open status of HDs room Chassit at Chalmers<br/>created by: <b>Gustaf Järgren</b>]]></string>
+    <string name="aboutLibraries_description_text"><![CDATA[Shows open status of HDs room Chassit at Chalmers<br/>Created by: <b>Gustaf Järgren</b>]]></string>
 
 </resources>

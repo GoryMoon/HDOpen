@@ -7,6 +7,12 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
 
 import java9.util.concurrent.CompletableFuture;
@@ -30,6 +36,11 @@ public class StatusRepository {
 
     private static final Object REQ_TAG = new Object();
     private CompletableFuture<JSONObject> refreshFuture;
+
+    private static final SimpleDateFormat INPUT_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS");
+    static {
+        INPUT_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
+    }
 
     public static StatusRepository getInstance() {
         if (instance == null) {
@@ -69,6 +80,8 @@ public class StatusRepository {
     private void error(VolleyError error) {
         Timber.v(error);
         cancelFuture(null);
+        this.status = Status.UNDEFINED;
+        this.updateMessage = "";
         //noinspection unchecked
         Stream.of(errorListeners.values().toArray(new Consumer[0])).forEach(consumer -> consumer.accept(error));
     }
@@ -86,7 +99,16 @@ public class StatusRepository {
             try {
                 int status = json.optInt("status", -1);
                 this.status = status == 0 ? Status.CLOSED: status == 1 ? Status.OPEN: Status.UNDEFINED;
-                this.updateMessage = json.getString("updated");
+                String updateString = this.updateMessage = json.getString("updated");
+                try {
+                    Date inTime = INPUT_FORMAT.parse(updateString);
+                    if (inTime != null) {
+                        this.updateMessage = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM, Locale.getDefault()).format(inTime);
+                    }
+                } catch (ParseException e) {
+                    Timber.e(e, "Failed to format update time");
+                    this.updateMessage = updateString;
+                }
             } catch (JSONException e) {
                 this.status = Status.UNDEFINED;
                 this.updateMessage = "";

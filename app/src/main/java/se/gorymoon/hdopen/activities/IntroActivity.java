@@ -6,17 +6,18 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
 
-import com.github.paolorotolo.appintro.AppIntro;
-import com.github.paolorotolo.appintro.AppIntroFragment;
-import com.github.paolorotolo.appintro.model.SliderPage;
-import com.github.paolorotolo.appintro.model.SliderPagerBuilder;
+import androidx.annotation.Nullable;
+import androidx.core.content.res.ResourcesCompat;
+import androidx.fragment.app.Fragment;
+
+import com.github.appintro.AppIntro;
+import com.github.appintro.AppIntroFragment;
+import com.github.appintro.model.SliderPage;
+import com.github.appintro.model.SliderPagerBuilder;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import androidx.annotation.Nullable;
-import androidx.core.content.res.ResourcesCompat;
-import androidx.fragment.app.Fragment;
 import se.gorymoon.hdopen.R;
 import se.gorymoon.hdopen.utils.PrefHandler;
 import se.gorymoon.hdopen.utils.Utils;
@@ -34,10 +35,10 @@ public class IntroActivity extends AppIntro {
 
         SliderPage page = new SliderPagerBuilder()
                 .title(getString(R.string.welcome))
-                .titleTypefaceRes(R.font.roboto_light)
+                .titleTypefaceFontRes(R.font.roboto_light)
                 .description(getString(R.string.welcome_desc))
-                .descTypefaceRes(R.font.roboto_light)
-                .bgColor(ResourcesCompat.getColor(getResources(), R.color.colorPrimaryDark, null))
+                .descriptionTypefaceFontRes(R.font.roboto_light)
+                .backgroundColor(ResourcesCompat.getColor(getResources(), R.color.colorPrimaryDark, null))
                 .imageDrawable(R.drawable.splash_logo)
                 .build();
         addSlide(AppIntroFragment.newInstance(page));
@@ -48,7 +49,7 @@ public class IntroActivity extends AppIntro {
         }
 
         setBarColor(ResourcesCompat.getColor(getResources(), R.color.colorPrimary, null));
-        showSkipButton(false);
+        setSkipButtonEnabled(false);
     }
 
     @Override

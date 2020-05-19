@@ -10,6 +10,7 @@ import android.provider.Settings;
 import androidx.core.app.NotificationCompat;
 import androidx.core.app.NotificationManagerCompat;
 import androidx.core.content.res.ResourcesCompat;
+
 import se.gorymoon.hdopen.App;
 import se.gorymoon.hdopen.R;
 import se.gorymoon.hdopen.activities.MainActivity;
@@ -50,7 +51,7 @@ public final class NotificationHandler {
         if (PrefHandler.Pref.NOTIFICATION_LED.get(true)) {
             onOffMs = 500;
         }
-        int color = ResourcesCompat.getColor(App.getInstance().getResources(), R.color.colorAccent, null);
+        int color = ResourcesCompat.getColor(App.getInstance().getResources(), R.color.colorCerise, null);
         builder.setLights(color, onOffMs, onOffMs);
         if (PrefHandler.Pref.NOTIFICATION_SOUND.get(false)) {
             builder.setSound(Settings.System.DEFAULT_NOTIFICATION_URI);

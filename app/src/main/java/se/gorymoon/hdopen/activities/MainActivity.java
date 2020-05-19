@@ -13,6 +13,8 @@ import android.widget.ImageView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.VolleyError;
 import com.google.common.base.Joiner;
@@ -20,7 +22,6 @@ import com.rodolfonavalon.shaperipplelibrary.ShapeRipple;
 import com.rodolfonavalon.shaperipplelibrary.model.Circle;
 import com.vdurmont.semver4j.Semver;
 
-import androidx.appcompat.app.AppCompatActivity;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -141,10 +142,9 @@ public class MainActivity extends AppCompatActivity {
         //Mess... Need to clean up somehow. Change to Kotlin?
         String changelog = " -" + Joiner.on("\n -").join(VersionHandler.getChangelog());
         String message = String.format(String.valueOf(getResources().getText(R.string.version_info)), VersionHandler.getLocalVersion().toString(), remoteVersion.toString(), changelog);
-        MaterialDialog dialog = new MaterialDialog(this)
+        MaterialDialog dialog = new MaterialDialog(this, MaterialDialog.getDEFAULT_BEHAVIOR())
                 .title(R.string.new_version, null)
-                .message(null, message,
-                        false, 1F);
+                .message(null, message, null);
 
         dialog.positiveButton(R.string.download_button, null, materialDialog -> {
             Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse(DOWNLOAD_URL));

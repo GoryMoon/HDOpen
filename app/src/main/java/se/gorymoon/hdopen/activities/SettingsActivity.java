@@ -2,12 +2,12 @@ package se.gorymoon.hdopen.activities;
 
 import android.os.Bundle;
 
-import com.mikepenz.aboutlibraries.Libs;
-import com.mikepenz.aboutlibraries.LibsBuilder;
-
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.preference.PreferenceFragmentCompat;
+
+import com.mikepenz.aboutlibraries.LibsBuilder;
+
 import se.gorymoon.hdopen.App;
 import se.gorymoon.hdopen.BuildConfig;
 import se.gorymoon.hdopen.R;
@@ -35,7 +35,6 @@ public class SettingsActivity extends AppCompatActivity {
             findPreference("libraries").setOnPreferenceClickListener(preference -> {
                 new LibsBuilder()
                         .withFields(R.string.class.getFields())
-                        .withActivityStyle(Libs.ActivityStyle.LIGHT_DARK_TOOLBAR)
                         .withLicenseShown(true)
                         .withAboutIconShown(true)
                         .withVersionShown(true)
