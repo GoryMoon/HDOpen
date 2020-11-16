@@ -10,6 +10,7 @@ import com.vdurmont.semver4j.Semver;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import java9.util.stream.StreamSupport;
 import se.gorymoon.hdopen.utils.PrefHandler;
 import se.gorymoon.hdopen.version.VersionHandler;
 import se.gorymoon.hdopen.work.Boot;
@@ -27,11 +28,7 @@ public class App extends Application {
     public void onCreate() {
         instance = this;
         super.onCreate();
-        if (BuildConfig.DEBUG) {
-            Timber.plant(new Timber.DebugTree());
-        } else {
-            Timber.plant(new ReleaseTree());
-        }
+        verifyLogging();
 
         if (PrefHandler.Pref.ENABLE_NOTIFICATIONS.get(false)) {
             Boot.addCheckWork();
@@ -45,6 +42,18 @@ public class App extends Application {
                 String versionValue = localVersion.getValue();
                 PrefHandler.Pref.LAST_VERSION.set(versionValue);
                 VersionHandler.handleNewVersion(s);
+            }
+        }
+    }
+
+    public static void verifyLogging() {
+        if (BuildConfig.DEBUG) {
+            if (StreamSupport.stream(Timber.forest()).noneMatch(tree -> tree instanceof Timber.DebugTree))
+                Timber.plant(new Timber.DebugTree());
+        } else {
+            if (StreamSupport.stream(Timber.forest()).noneMatch(tree -> tree instanceof ReleaseTree)) {
+                FirebaseCrashlytics.getInstance().setCrashlyticsCollectionEnabled(true);
+                Timber.plant(new ReleaseTree());
             }
         }
     }

@@ -1,7 +1,8 @@
-package se.gorymoon.hdopen.status;
+package se.gorymoon.hdopen.utils;
 
 import androidx.annotation.ColorRes;
 import androidx.annotation.StringRes;
+
 import se.gorymoon.hdopen.R;
 
 public enum Status {
@@ -9,7 +10,7 @@ public enum Status {
     CLOSED(1, R.string.closed, R.color.closed),
     UNDEFINED(2, R.string.undefined, R.color.undefined);
 
-    private int id;
+    private final int id;
     @StringRes
     private final int status;
     @ColorRes

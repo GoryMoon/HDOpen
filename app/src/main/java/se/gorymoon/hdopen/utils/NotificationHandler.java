@@ -33,7 +33,7 @@ public final class NotificationHandler {
         Intent intent = new Intent(App.getInstance(), MainActivity.class);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.putExtra(NOTIFICATION_EXTRA, intentExtra);
-        PendingIntent pi = PendingIntent.getActivity(App.getInstance(), 0, intent, 0);
+        PendingIntent pi = PendingIntent.getActivity(App.getInstance(), 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
         NotificationCompat.Builder builder = new NotificationCompat.Builder(App.getInstance(), CHANNEL_ID);
         builder.setSmallIcon(R.mipmap.hd_logo_transparent)

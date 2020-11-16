@@ -5,34 +5,27 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.FrameLayout;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.content.res.ResourcesCompat;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.VolleyError;
-import com.google.common.base.Joiner;
-import com.rodolfonavalon.shaperipplelibrary.ShapeRipple;
 import com.rodolfonavalon.shaperipplelibrary.model.Circle;
 import com.vdurmont.semver4j.Semver;
 
-import butterknife.BindView;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-import butterknife.Unbinder;
 import it.sephiroth.android.library.xtooltip.ClosePolicy;
 import it.sephiroth.android.library.xtooltip.Tooltip;
 import kotlin.Unit;
 import se.gorymoon.hdopen.R;
+import se.gorymoon.hdopen.databinding.ActivityMainBinding;
 import se.gorymoon.hdopen.network.StatusRepository;
-import se.gorymoon.hdopen.status.Status;
 import se.gorymoon.hdopen.utils.NotificationHandler;
+import se.gorymoon.hdopen.utils.Status;
 import se.gorymoon.hdopen.utils.Utils;
 import se.gorymoon.hdopen.version.VersionHandler;
 import timber.log.Timber;
@@ -41,25 +34,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String DOWNLOAD_URL = "https://gorymoon.se/hdopen";
 
-    @BindView(R.id.status)
-    public TextView statusView;
-
-    @BindView(R.id.updated)
-    public TextView updatedView;
-
-    @BindView(R.id.background)
-    public FrameLayout background;
-
-    @BindView(R.id.progressBar)
-    public ProgressBar progressBar;
-
-    @BindView(R.id.info_button)
-    public ImageView infoButton;
-
-    @BindView(R.id.ripple)
-    public ShapeRipple ripple;
-
-    private Unbinder unbinder;
+    private ActivityMainBinding binding;
     private Tooltip tooltip;
     private Semver remoteVersion;
 
@@ -71,17 +46,20 @@ public class MainActivity extends AppCompatActivity {
         IntroActivity.checkFirstStart(this);
         Utils.setActionBar(getApplicationContext(), getSupportActionBar());
 
-        setContentView(R.layout.activity_main);
-        unbinder = ButterKnife.bind(this);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
 
-        background.postDelayed(() -> {
-            Bundle extras = getIntent().getExtras();
+        binding.background.setOnClickListener(v -> refresh());
+        binding.infoButton.setOnClickListener(this::infoButtonClick);
+
+        Bundle extras = getIntent().getExtras();
+        binding.background.postDelayed(() -> {
             if (extras != null) {
                 String string = extras.getString(NotificationHandler.NOTIFICATION_EXTRA);
                 if (string != null && string.equals(VersionHandler.NEW_VERSION_TAG)) {
                     shouldShowTooltip = true;
                 }
-                Timber.d("Got data: %s", Joiner.on(", ").join(extras.keySet()));
+                Timber.d("Got data: %s", TextUtils.join(", ", extras.keySet()));
             }
             new Handler().post(() -> {
                 VersionHandler.setListener(this::onVersionChange);
@@ -98,13 +76,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        unbinder.unbind();
-    }
-
-
-    @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
@@ -112,7 +83,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
@@ -124,23 +94,21 @@ public class MainActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-    @OnClick(R.id.background)
     public void refresh() {
-        if ((progressBar.getVisibility() == View.INVISIBLE)) {
-            progressBar.setVisibility(View.VISIBLE);
-            StatusRepository.getInstance().refreshData();
+        if ((binding.progressBar.getVisibility() == View.INVISIBLE)) {
+            binding.progressBar.setVisibility(View.VISIBLE);
+            StatusRepository.getInstance().refreshData(getApplicationContext());
         }
     }
 
-    @OnClick(R.id.info_button)
-    public void infoButton() {
+    public void infoButtonClick(View v) {
         Timber.d("Clicked info button");
         if (tooltip != null) {
             tooltip.dismiss();
         }
 
         //Mess... Need to clean up somehow. Change to Kotlin?
-        String changelog = " -" + Joiner.on("\n -").join(VersionHandler.getChangelog());
+        String changelog = " -" + TextUtils.join("\n -", VersionHandler.getChangelog());
         String message = String.format(String.valueOf(getResources().getText(R.string.version_info)), VersionHandler.getLocalVersion().toString(), remoteVersion.toString(), changelog);
         MaterialDialog dialog = new MaterialDialog(this, MaterialDialog.getDEFAULT_BEHAVIOR())
                 .title(R.string.new_version, null)
@@ -161,13 +129,13 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setAppStatus(Status status, String time) {
-        if (progressBar != null && statusView != null && updatedView != null && ripple != null) {
-            progressBar.setVisibility(View.INVISIBLE);
+        if (binding.progressBar != null && binding.status != null && binding.updated != null && binding.ripple != null) {
+            binding.progressBar.setVisibility(View.INVISIBLE);
 
-            statusView.setText(status.getStatus());
-            updatedView.setText(time);
-            background.setBackgroundResource(status.getColor());
-            ripple.setRippleColor(getResources().getColor(status.getColor()));
+            binding.status.setText(status.getStatus());
+            binding.updated.setText(time);
+            binding.background.setBackgroundResource(status.getColor());
+            binding.ripple.setRippleColor(getResources().getColor(status.getColor()));
             Timber.d("Updated status");
         }
     }
@@ -178,24 +146,25 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateVersionInfo() {
-        if (ripple != null && infoButton != null) {
-            ripple.setRippleShape(new Circle());
-            ripple.setRippleColor(getResources().getColor(R.color.undefined));
-            ripple.setVisibility(View.VISIBLE);
-            infoButton.setVisibility(View.VISIBLE);
+        if (binding.ripple != null && binding.infoButton != null) {
+            binding.ripple.setRippleShape(new Circle());
+            binding.ripple.setRippleColor(getResources().getColor(R.color.undefined));
+            binding.ripple.setVisibility(View.VISIBLE);
+            binding.infoButton.setVisibility(View.VISIBLE);
 
             if (shouldShowTooltip) {
                 shouldShowTooltip = false;
                 tooltip = new Tooltip.Builder(this)
-                        .anchor(infoButton, 0, 0, false)
+                        .anchor(binding.infoButton, 0, 0, false)
                         .text(R.string.new_version)
                         .arrow(true)
-                        .fadeDuration(200)
                         .overlay(false)
+                        .typeface(ResourcesCompat.getFont(getApplicationContext(), R.font.roboto_light))
+                        .styleId(R.style.CustomTooltip)
                         .closePolicy(ClosePolicy.Companion.getTOUCH_INSIDE_NO_CONSUME())
                         .floatingAnimation(Tooltip.Animation.Companion.getSLOW())
                         .create();
-                tooltip.show(infoButton, Tooltip.Gravity.LEFT, true);
+                tooltip.show(binding.infoButton, Tooltip.Gravity.LEFT, true);
             }
         }
     }

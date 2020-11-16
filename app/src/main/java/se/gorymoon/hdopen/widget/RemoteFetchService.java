@@ -4,13 +4,12 @@ import android.appwidget.AppWidgetManager;
 import android.content.Context;
 import android.content.Intent;
 
-import org.json.JSONObject;
+import androidx.annotation.NonNull;
+import androidx.core.app.JobIntentService;
 
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 
-import androidx.annotation.NonNull;
-import androidx.core.app.JobIntentService;
 import java9.util.concurrent.CompletableFuture;
 import se.gorymoon.hdopen.network.StatusRepository;
 import timber.log.Timber;
@@ -35,11 +34,9 @@ public class RemoteFetchService extends JobIntentService {
 
             Timber.d("Requesting data");
             try {
-                CompletableFuture<JSONObject> future = StatusRepository.getInstance().refreshData();
+                CompletableFuture<StatusRepository.StatusMessage> future = StatusRepository.getInstance().refreshData(getApplicationContext());
                 future.get();
-            } catch (InterruptedException e) {
-                Timber.v(e, "Error getting the future of widget update");
-            } catch (ExecutionException e) {
+            } catch (InterruptedException | ExecutionException e) {
                 Timber.v(e, "Error getting the future of widget update");
             } catch (CancellationException e) {
                 Timber.d(e, "Error getting the future of widget update");

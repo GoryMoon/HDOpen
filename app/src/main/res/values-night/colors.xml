@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorPrimary">#144871</color>
+    <color name="colorPrimaryDark">#113E60</color>
+    <color name="colorCerise">#801852</color>
+    <color name="colorCeriseDark">#6A1645</color>
+
+    <color name="open">#0C730A</color>
+    <color name="undefined">#7A790C</color>
+    <color name="closed">#781711</color>
+</resources>

@@ -1,17 +1,13 @@
 package se.gorymoon.hdopen.network;
 
-import com.android.volley.Request;
+import android.content.Context;
+import android.text.format.DateUtils;
+
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
 import java.util.TimeZone;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -19,27 +15,26 @@ import java9.util.concurrent.CompletableFuture;
 import java9.util.function.BiConsumer;
 import java9.util.function.Consumer;
 import java9.util.stream.Stream;
-import se.gorymoon.hdopen.status.Status;
+import se.gorymoon.hdopen.utils.Status;
 import timber.log.Timber;
 
 public class StatusRepository {
-
     private static StatusRepository instance;
 
-    private static final String REMOTE_JSON_URL = "https://hd.chalmers.se/getstatus/";
+    private static final String REMOTE_JSON_URL = "https://hd.chalmers.se/api/door";
 
-    private ConcurrentHashMap<String, BiConsumer<Status, String>> listeners = new ConcurrentHashMap<>();
-    private ConcurrentHashMap<String, Consumer<VolleyError>> errorListeners = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, BiConsumer<Status, String>> listeners = new ConcurrentHashMap<>();
+    private final ConcurrentHashMap<String, Consumer<VolleyError>> errorListeners = new ConcurrentHashMap<>();
 
     private Status status = Status.UNDEFINED;
     private String updateMessage;
 
     private static final Object REQ_TAG = new Object();
-    private CompletableFuture<JSONObject> refreshFuture;
+    private CompletableFuture<StatusMessage> refreshFuture;
 
-    private static final SimpleDateFormat INPUT_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.SSSSSS");
+    private static final SimpleDateFormat INPUT_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
     static {
-        INPUT_FORMAT.setTimeZone(TimeZone.getTimeZone("UTC"));
+        INPUT_FORMAT.setTimeZone(TimeZone.getTimeZone("Europe/Stockholm"));
     }
 
     public static StatusRepository getInstance() {
@@ -65,9 +60,9 @@ public class StatusRepository {
         errorListeners.remove(id);
     }
 
-    public CompletableFuture<JSONObject> refreshData() {
+    public CompletableFuture<StatusMessage> refreshData(Context context) {
         Timber.d("Requesting data");
-        JsonObjectRequest request = new JsonObjectRequest(Request.Method.GET, REMOTE_JSON_URL, null, this::onSuccess, this::error);
+        GsonRequest<StatusMessage> request = new GsonRequest<>(REMOTE_JSON_URL, StatusMessage.class, null, response -> onSuccess(response, context), this::onError);
         request.setShouldCache(false);
         request.setTag(REQ_TAG);
         RequestSingleton.getInstance().addToRequestQueue(request);
@@ -77,7 +72,7 @@ public class StatusRepository {
         return refreshFuture;
     }
 
-    private void error(VolleyError error) {
+    private void onError(VolleyError error) {
         Timber.v(error);
         cancelFuture(null);
         this.status = Status.UNDEFINED;
@@ -92,27 +87,20 @@ public class StatusRepository {
         Stream.of(listeners.values().toArray(new BiConsumer[0])).forEach(consumer -> consumer.accept(status, updateMessage));
     }
 
-    private void onSuccess(JSONObject json) {
-        Timber.d(json.toString());
-        if (json.has("status")) {
-            cancelFuture(json);
+    private void onSuccess(StatusMessage statusMessage, Context context) {
+        Timber.d(statusMessage.toString());
+        if (statusMessage != null) {
+            cancelFuture(statusMessage);
+            this.status = statusMessage.status ? Status.CLOSED: Status.OPEN;
+            String updateString = this.updateMessage = statusMessage.updated;
             try {
-                int status = json.optInt("status", -1);
-                this.status = status == 0 ? Status.CLOSED: status == 1 ? Status.OPEN: Status.UNDEFINED;
-                String updateString = this.updateMessage = json.getString("updated");
-                try {
-                    Date inTime = INPUT_FORMAT.parse(updateString);
-                    if (inTime != null) {
-                        this.updateMessage = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.MEDIUM, Locale.getDefault()).format(inTime);
-                    }
-                } catch (ParseException e) {
-                    Timber.e(e, "Failed to format update time");
-                    this.updateMessage = updateString;
+                Date inTime = INPUT_FORMAT.parse(updateString);
+                if (inTime != null) {
+                    this.updateMessage = DateUtils.formatDateTime(context, inTime.getTime(), DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_YEAR);
                 }
-            } catch (JSONException e) {
-                this.status = Status.UNDEFINED;
-                this.updateMessage = "";
-                Timber.wtf(e, "An error occurred while getting values. Possible API change?");
+            } catch (ParseException e) {
+                Timber.e(e, "Failed to format update time");
+                this.updateMessage = updateString;
             }
         } else {
             cancelFuture(null);
@@ -124,7 +112,7 @@ public class StatusRepository {
         Stream.of(listeners.values().toArray(new BiConsumer[0])).forEach(consumer -> consumer.accept(status, updateMessage));
     }
 
-    private void cancelFuture(JSONObject json) {
+    private void cancelFuture(StatusMessage json) {
         if (refreshFuture != null && !refreshFuture.isDone() && !refreshFuture.isCancelled()) {
             refreshFuture.complete(json);
             refreshFuture = null;
@@ -137,5 +125,22 @@ public class StatusRepository {
 
     public String getUpdateMessage() {
         return updateMessage;
+    }
+
+    public static class StatusMessage {
+        public String updated;
+        public boolean status;
+        public int duration;
+        public String duration_str;
+
+        @Override
+        public String toString() {
+            return "StatusMessage{" +
+                    "updated='" + updated + '\'' +
+                    ", status=" + status +
+                    ", duration=" + duration +
+                    ", duration_str='" + duration_str + '\'' +
+                    '}';
+        }
     }
 }

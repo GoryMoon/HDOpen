@@ -4,12 +4,13 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
-
+import androidx.work.BackoffPolicy;
 import androidx.work.ExistingPeriodicWorkPolicy;
 import androidx.work.PeriodicWorkRequest;
 import androidx.work.WorkManager;
+
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
 
 public class Boot extends BroadcastReceiver {
 
@@ -23,8 +24,9 @@ public class Boot extends BroadcastReceiver {
     }
 
     public static void addCheckWork() {
-        PeriodicWorkRequest.Builder builder = new PeriodicWorkRequest.Builder(CheckWorker.class, 15, TimeUnit.MINUTES);
+        PeriodicWorkRequest.Builder builder = new PeriodicWorkRequest.Builder(CheckWorker.class, PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS, TimeUnit.MILLISECONDS);
         builder.addTag(WORK_TAG);
+        builder.setBackoffCriteria(BackoffPolicy.LINEAR, PeriodicWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS);
         WorkManager.getInstance().enqueueUniquePeriodicWork(WORK_TAG, ExistingPeriodicWorkPolicy.KEEP, builder.build());
     }
 }

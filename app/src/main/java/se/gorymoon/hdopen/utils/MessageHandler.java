@@ -1,5 +1,7 @@
 package se.gorymoon.hdopen.utils;
 
+import androidx.annotation.NonNull;
+
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -35,19 +37,17 @@ public class MessageHandler extends FirebaseMessagingService {
             }
 
             if (action != null) {
-                switch (action) {
-                    case VERSION_ACTION:
-                        if (data != null) {
-                            try {
-                                String version = data.getString("version");
-                                JSONArray changelog = data.getJSONArray("changelog");
+                if (VERSION_ACTION.equals(action)) {
+                    if (data != null) {
+                        try {
+                            String version = data.getString("version");
+                            JSONArray changelog = data.getJSONArray("changelog");
 
-                                VersionHandler.handleVersionMessage(version, changelog);
-                            } catch (JSONException e) {
-                                Timber.v(e, "Error parsing changelog");
-                            }
+                            VersionHandler.handleVersionMessage(version, changelog);
+                        } catch (JSONException e) {
+                            Timber.v(e, "Error parsing changelog");
                         }
-                        break;
+                    }
                 }
             }
 
@@ -59,4 +59,7 @@ public class MessageHandler extends FirebaseMessagingService {
             Timber.d("Message Notification Body: %s", remoteMessage.getNotification().getBody());
         }
     }
+
+    @Override
+    public void onNewToken(@NonNull String s) {}
 }

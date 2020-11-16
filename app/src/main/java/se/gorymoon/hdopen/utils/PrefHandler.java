@@ -6,7 +6,6 @@ import android.content.SharedPreferences;
 import java.util.Set;
 
 import se.gorymoon.hdopen.App;
-import se.gorymoon.hdopen.status.Status;
 
 public class PrefHandler {
 

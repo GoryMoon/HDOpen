@@ -13,9 +13,10 @@ import android.widget.Toast;
 
 import java.util.Arrays;
 
+import se.gorymoon.hdopen.App;
 import se.gorymoon.hdopen.R;
 import se.gorymoon.hdopen.network.StatusRepository;
-import se.gorymoon.hdopen.status.Status;
+import se.gorymoon.hdopen.utils.Status;
 import timber.log.Timber;
 
 public class WidgetOpenProvider extends AppWidgetProvider {
@@ -28,6 +29,7 @@ public class WidgetOpenProvider extends AppWidgetProvider {
     @Override
     public void onReceive(Context context, Intent intent) {
         String action = intent.getAction();
+        App.verifyLogging();
         if (AppWidgetManager.ACTION_APPWIDGET_UPDATE.equals(action)) {
             Bundle extras = intent.getExtras();
             if (extras != null) {

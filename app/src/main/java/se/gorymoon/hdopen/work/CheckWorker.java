@@ -2,19 +2,19 @@ package se.gorymoon.hdopen.work;
 
 import android.content.Context;
 
-import org.json.JSONObject;
+import androidx.annotation.NonNull;
+import androidx.work.Worker;
+import androidx.work.WorkerParameters;
 
 import java.util.concurrent.CancellationException;
 import java.util.concurrent.ExecutionException;
 
-import androidx.annotation.NonNull;
-import androidx.work.Worker;
-import androidx.work.WorkerParameters;
 import java9.util.concurrent.CompletableFuture;
+import se.gorymoon.hdopen.App;
 import se.gorymoon.hdopen.network.StatusRepository;
-import se.gorymoon.hdopen.status.Status;
 import se.gorymoon.hdopen.utils.NotificationHandler;
 import se.gorymoon.hdopen.utils.PrefHandler;
+import se.gorymoon.hdopen.utils.Status;
 import timber.log.Timber;
 
 public class CheckWorker extends Worker {
@@ -28,13 +28,12 @@ public class CheckWorker extends Worker {
     @NonNull
     @Override
     public Result doWork() {
-        JSONObject jsonObject = null;
+        App.verifyLogging();
+        StatusRepository.StatusMessage jsonObject = null;
         try {
-            CompletableFuture<JSONObject> future = StatusRepository.getInstance().refreshData();
+            CompletableFuture<StatusRepository.StatusMessage> future = StatusRepository.getInstance().refreshData(getApplicationContext());
             jsonObject = future.get();
-        } catch (InterruptedException e) {
-            Timber.v(e, "Error getting the future of backgroundtask");
-        } catch (ExecutionException e) {
+        } catch (InterruptedException | ExecutionException e) {
             Timber.v(e, "Error getting the future of backgroundtask");
         } catch (CancellationException ignored) {}
 

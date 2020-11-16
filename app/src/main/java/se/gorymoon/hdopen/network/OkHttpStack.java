@@ -1,7 +1,3 @@
-/*
- * Created by @alirezaafkar on 20/11/17.
- * https://gist.github.com/alirezaafkar/a62d6a9a7e582322ca1a764bad116a70
- */
 package se.gorymoon.hdopen.network;
 
 import com.android.volley.AuthFailureError;
@@ -19,15 +15,28 @@ import java.util.concurrent.TimeUnit;
 
 import okhttp3.Call;
 import okhttp3.Headers;
+import okhttp3.Interceptor;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 
-
+/**
+ * Created by @subrahmanya  on 2/3/18.
+ * CREDITS:
+ *<1>https://gist.github.com/alashow/c96c09320899e4caa06b
+ *<2>https://gist.github.com/intari/e57a945eed9c2ee0f9eb9082469698f3
+ *<3>https://gist.github.com/alirezaafkar/a62d6a9a7e582322ca1a764bad116a70
+ *
+ *
+ * Reason: for making the Volley use latest okhttpstack work for latest version Volley 1.1.0 by removing all deprecated org.apache dependencies!
+ */
 public class OkHttpStack extends BaseHttpStack {
-    public OkHttpStack() {
+    private final List<Interceptor> interceptors;
+
+    public OkHttpStack(List<Interceptor> interceptors) {
+        this.interceptors = interceptors;
     }
 
     @Override
@@ -52,11 +61,14 @@ public class OkHttpStack extends BaseHttpStack {
 
         setConnectionParametersForRequest(okHttpRequestBuilder, request);
 
+        for (Interceptor interceptor : interceptors) {
+            clientBuilder.addNetworkInterceptor(interceptor);
+        }
+
         OkHttpClient client = clientBuilder.build();
         okhttp3.Request okHttpRequest = okHttpRequestBuilder.build();
         Call okHttpCall = client.newCall(okHttpRequest);
         Response okHttpResponse = okHttpCall.execute();
-
 
         int code = okHttpResponse.code();
         ResponseBody body = okHttpResponse.body();
@@ -84,7 +96,7 @@ public class OkHttpStack extends BaseHttpStack {
                 // Ensure backwards compatibility.  Volley assumes a request with a null body is a GET.
                 byte[] postBody = request.getBody();
                 if (postBody != null) {
-                    builder.post(RequestBody.create(MediaType.parse(request.getBodyContentType()), postBody));
+                    builder.post(RequestBody.create(postBody, MediaType.parse(request.getBodyContentType())));
                 }
                 break;
             case Request.Method.GET:
@@ -116,12 +128,12 @@ public class OkHttpStack extends BaseHttpStack {
         }
     }
 
-    private static RequestBody createRequestBody(Request r) throws AuthFailureError {
+    private static <T> RequestBody createRequestBody(Request<T> r) throws AuthFailureError {
         final byte[] body = r.getBody();
         if (body == null) {
             return null;
         }
-        return RequestBody.create(MediaType.parse(r.getBodyContentType()), body);
+        return RequestBody.create(body, MediaType.parse(r.getBodyContentType()));
     }
 }
 

@@ -4,6 +4,7 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.toolbox.Volley;
 
+import java9.util.Lists;
 import se.gorymoon.hdopen.App;
 
 
@@ -31,13 +32,12 @@ public class RequestSingleton {
 
     /**
      * Get's the request queue, if it doesn't exist it creates a new one
-     * @return
      */
     public RequestQueue getRequestQueue() {
         if (requestQueue == null) {
             // getApplicationContext() is key, it keeps you from leaking the
             // Activity or BroadcastReceiver if someone passes one in.
-            requestQueue = Volley.newRequestQueue(App.getInstance().getApplicationContext(), new OkHttpStack());
+            requestQueue = Volley.newRequestQueue(App.getInstance().getApplicationContext(), new OkHttpStack(Lists.of()));
         }
         return requestQueue;
     }
