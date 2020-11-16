@@ -4,6 +4,7 @@ import android.content.Context;
 import android.text.format.DateUtils;
 
 import com.android.volley.VolleyError;
+import com.google.gson.annotations.SerializedName;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -128,10 +129,14 @@ public class StatusRepository {
     }
 
     public static class StatusMessage {
+        @SerializedName("updated")
         public String updated;
+        @SerializedName("status")
         public boolean status;
+        @SerializedName("duration")
         public int duration;
-        public String duration_str;
+        @SerializedName("duration_str")
+        public String durationString;
 
         @Override
         public String toString() {
@@ -139,7 +144,7 @@ public class StatusRepository {
                     "updated='" + updated + '\'' +
                     ", status=" + status +
                     ", duration=" + duration +
-                    ", duration_str='" + duration_str + '\'' +
+                    ", durationString='" + durationString + '\'' +
                     '}';
         }
     }
