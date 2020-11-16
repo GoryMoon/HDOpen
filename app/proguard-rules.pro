@@ -35,9 +35,8 @@
 -keepattributes Signature
 -keepattributes *Annotation*
 
--keep class .R
--keep class **.R$* {
-    <fields>;
+-keepclasseswithmembers class **.R$* {
+    public static final int define_*;
 }
 
 # Gson uses generic type information stored in a class file when working with fields. Proguard

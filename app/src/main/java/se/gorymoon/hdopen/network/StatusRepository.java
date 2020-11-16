@@ -90,23 +90,18 @@ public class StatusRepository {
 
     private void onSuccess(StatusMessage statusMessage, Context context) {
         Timber.d(statusMessage.toString());
-        if (statusMessage != null) {
-            cancelFuture(statusMessage);
-            this.status = statusMessage.status ? Status.CLOSED: Status.OPEN;
-            String updateString = this.updateMessage = statusMessage.updated;
-            try {
-                Date inTime = INPUT_FORMAT.parse(updateString);
-                if (inTime != null) {
-                    this.updateMessage = DateUtils.formatDateTime(context, inTime.getTime(), DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_YEAR);
-                }
-            } catch (ParseException e) {
-                Timber.e(e, "Failed to format update time");
-                this.updateMessage = updateString;
+        cancelFuture(statusMessage);
+
+        this.status = statusMessage.status ? Status.OPEN: Status.CLOSED;
+        String updateString = this.updateMessage = statusMessage.updated;
+        try {
+            Date inTime = INPUT_FORMAT.parse(updateString);
+            if (inTime != null) {
+                this.updateMessage = DateUtils.formatDateTime(context, inTime.getTime(), DateUtils.FORMAT_SHOW_TIME | DateUtils.FORMAT_SHOW_DATE | DateUtils.FORMAT_SHOW_YEAR);
             }
-        } else {
-            cancelFuture(null);
-            this.status = Status.UNDEFINED;
-            this.updateMessage = "";
+        } catch (ParseException e) {
+            Timber.e(e, "Failed to format update time");
+            this.updateMessage = updateString;
         }
 
         //noinspection unchecked
