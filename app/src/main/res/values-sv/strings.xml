@@ -38,4 +38,7 @@
     <string name="fetching_data">Hämtar data från HD</string>
     <string name="background_channel_name">HDOpen bakgrundsarbeten</string>
     <string name="background_channel_description">Kanal för HDOpen bakgrundsarbeten</string>
+    <string name="pref_misc">Blandat</string>
+    <string name="pref_title_ad">\"Reklam\"</string>
+    <string name="pref_summary_ad">Tillåt \"Reklam\" i appen</string>
 </resources>

@@ -77,6 +77,17 @@
             app:layout_constraintTop_toTopOf="parent"
             app:srcCompat="@drawable/ic_info_white_24dp" />
 
+        <ImageView
+            android:id="@+id/adView"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:contentDescription="@string/ad_image_description"
+            android:scaleType="fitEnd"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            tools:srcCompat="@tools:sample/backgrounds/scenic" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
 </FrameLayout>

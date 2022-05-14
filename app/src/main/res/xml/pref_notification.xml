@@ -31,8 +31,6 @@
             app:title="@string/pref_title_sound"
             app:summary="@string/pref_summary_sound" />
 
-
-
         <SwitchPreference
             app:defaultValue="true"
             app:dependency="notifications_new_message"
@@ -46,6 +44,17 @@
             app:key="notifications_status"
             app:title="@string/pref_title_status"
             app:summary="@string/pref_summary_status" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        app:key="misc"
+        app:title="@string/pref_misc">
+
+        <SwitchPreference
+            app:defaultValue="true"
+            app:key="misc_ad"
+            app:title="@string/pref_title_ad"
+            app:summary="@string/pref_summary_ad" />
     </PreferenceCategory>
 
     <PreferenceCategory

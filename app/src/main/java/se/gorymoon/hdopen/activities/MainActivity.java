@@ -1,5 +1,6 @@
 package se.gorymoon.hdopen.activities;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -13,9 +14,11 @@ import android.view.View;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.res.ResourcesCompat;
+import androidx.work.ListenableWorker;
 
 import com.afollestad.materialdialogs.MaterialDialog;
 import com.android.volley.VolleyError;
+import com.bumptech.glide.Glide;
 import com.rodolfonavalon.shaperipplelibrary.model.Circle;
 import com.vdurmont.semver4j.Semver;
 
@@ -23,9 +26,11 @@ import it.sephiroth.android.library.xtooltip.ClosePolicy;
 import it.sephiroth.android.library.xtooltip.Tooltip;
 import kotlin.Unit;
 import se.gorymoon.hdopen.R;
+import se.gorymoon.hdopen.ads.AdManager;
 import se.gorymoon.hdopen.databinding.ActivityMainBinding;
 import se.gorymoon.hdopen.network.StatusRepository;
 import se.gorymoon.hdopen.utils.NotificationHandler;
+import se.gorymoon.hdopen.utils.PrefHandler;
 import se.gorymoon.hdopen.utils.Status;
 import se.gorymoon.hdopen.utils.Utils;
 import se.gorymoon.hdopen.version.VersionHandler;
@@ -41,6 +46,10 @@ public class MainActivity extends AppCompatActivity {
     private Semver remoteVersion;
 
     public boolean shouldShowTooltip;
+
+    private AdManager adManager;
+    private Handler adHandler;
+    private Runnable adRunnable;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -75,6 +84,62 @@ public class MainActivity extends AppCompatActivity {
         StatusRepository.getInstance().addErrorListener("app", this::error);
 
         refresh();
+    }
+
+    @Override
+    protected void onStart() {
+        showAds();
+        super.onStart();
+    }
+
+    @Override
+    protected void onResume() {
+        showAds();
+        super.onResume();
+    }
+
+    @Override
+    protected void onStop() {
+        removeAds();
+        super.onStop();
+    }
+
+    @Override
+    protected void onDestroy() {
+        removeAds();
+        super.onDestroy();
+    }
+
+    private void showAds() {
+        if (PrefHandler.Pref.ENABLE_ADS.get(true)) {
+            if (adManager == null)
+                adManager = new AdManager();
+            if (adHandler == null)
+                adHandler = new Handler();
+            else if (adRunnable != null)
+                adHandler.removeCallbacks(adRunnable);
+
+            Activity activity = this;
+            adRunnable = () -> adManager.fetchAd().handle((adResponse, throwable) -> {
+                if (adResponse != null)
+                    Glide.with(activity).load(adResponse.image).into(binding.adView);
+
+                if (adHandler != null)
+                    adHandler.postDelayed(adRunnable, 7500);
+
+                return ListenableWorker.Result.success();
+            });
+            adHandler.postDelayed(adRunnable, 100);
+        } else {
+            removeAds();
+        }
+    }
+
+    private void removeAds() {
+        if (adHandler != null && adRunnable != null)
+            adHandler.removeCallbacks(adRunnable);
+
+        binding.adView.setImageBitmap(null);
     }
 
     @Override

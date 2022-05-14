@@ -87,9 +87,11 @@ public class PrefHandler {
         public static final Pref<Boolean> NOTIFICATION_VERSION = new Pref<>("notifications_version", BOOLEAN_GETTER, BOOLEAN_SETTER);
         public static final Pref<Boolean> NOTIFICATION_STATUS = new Pref<>("notifications_status", BOOLEAN_GETTER, BOOLEAN_SETTER);
 
-        private String key;
-        private PrefGetter<E> internalGetter;
-        private PrefSetter<E> internalSetter;
+        public static final Pref<Boolean> ENABLE_ADS = new Pref<>("misc_ad", BOOLEAN_GETTER, BOOLEAN_SETTER);
+
+        private final String key;
+        private final PrefGetter<E> internalGetter;
+        private final PrefSetter<E> internalSetter;
 
         private Pref(String key, PrefGetter<E> internalGetter, PrefSetter<E> internalSetter) {
             this.key = key;
