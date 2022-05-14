@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="se.gorymoon.hdopen">
+    xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
@@ -14,7 +14,9 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher"
         android:supportsRtl="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        android:dataExtractionRules="@xml/data_extraction_rules"
+        tools:targetApi="s">
         <activity
             android:name=".activities.SettingsActivity"
             android:label="@string/title_activity_settings"
@@ -37,7 +39,8 @@
             android:name="com.mikepenz.aboutlibraries.ui.LibsActivity"
             android:theme="@style/AppTheme.NoActionBar" />
 
-        <activity android:name=".activities.MainActivity">
+        <activity android:name=".activities.MainActivity"
+            android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -48,7 +51,8 @@
             android:name=".activities.IntroActivity"
             android:label="@string/intro_name" />
 
-        <receiver android:name=".widget.WidgetOpenProvider">
+        <receiver android:name=".widget.WidgetOpenProvider"
+            android:exported="false">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="se.gorymoon.openhd.DATA_FETCHED" />
@@ -59,12 +63,8 @@
                 android:resource="@xml/widget_info" />
         </receiver>
 
-        <service
-            android:name=".widget.RemoteFetchService"
-            android:icon="@drawable/green_button"
-            android:label="@string/fetch_service"
-            android:permission="android.permission.BIND_JOB_SERVICE" />
-        <service android:name=".utils.MessageHandler">
+        <service android:name=".utils.MessageHandler"
+            android:exported="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>

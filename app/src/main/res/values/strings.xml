@@ -7,7 +7,9 @@
     <string name="intro_name" translatable="false">App Intro</string>
 
     <string name="channel_name">HDOpen notifications</string>
+    <string name="background_channel_name">HDOpen background</string>
     <string name="channel_description">Channel for HDOpen notifications</string>
+    <string name="background_channel_description">Channel for HDOpen background worker</string>
     <string name="welcome">Welcome to HDOpen</string>
     <string name="welcome_desc">Before starting you need to setup some settings, these can be changed later in the settings menu</string>
 
@@ -21,6 +23,7 @@
     <string name="new_version">A new version is available</string>
     <string name="version_info">Current version: %s\nNew version: %s\n\nChangelog:\n%s</string>
     <string name="download_button">Download</string>
+    <string name="fetching_data">Fetching data from HD</string>
     <string name="close">Close</string>
 
 

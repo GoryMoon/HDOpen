@@ -3,6 +3,8 @@ package se.gorymoon.hdopen.network;
 import android.content.Context;
 import android.text.format.DateUtils;
 
+import androidx.annotation.NonNull;
+
 import com.android.volley.VolleyError;
 import com.google.gson.annotations.SerializedName;
 
@@ -133,6 +135,7 @@ public class StatusRepository {
         @SerializedName("duration_str")
         public String durationString;
 
+        @NonNull
         @Override
         public String toString() {
             return "StatusMessage{" +

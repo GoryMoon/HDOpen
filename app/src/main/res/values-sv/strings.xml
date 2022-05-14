@@ -35,4 +35,7 @@
     <string name="opt_in">Opt-in notifikationer när status ändras</string>
     <string name="recommended_version">Rekommenderad för ny versions info</string>
     <string name="aboutLibraries_description_text"><![CDATA[Visar dörr statusen av HDs rum Chassit på Chalmers<br/>Skapad av: <b>Gustaf Järgren</b>]]></string>
+    <string name="fetching_data">Hämtar data från HD</string>
+    <string name="background_channel_name">HDOpen bakgrundsarbeten</string>
+    <string name="background_channel_description">Kanal för HDOpen bakgrundsarbeten</string>
 </resources>

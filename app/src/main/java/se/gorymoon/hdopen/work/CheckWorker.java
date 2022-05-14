@@ -19,7 +19,7 @@ import timber.log.Timber;
 
 public class CheckWorker extends Worker {
 
-    private static int tries = 1;
+    private int tries = 1;
 
     public CheckWorker(@NonNull Context context, @NonNull WorkerParameters workerParams) {
         super(context, workerParams);

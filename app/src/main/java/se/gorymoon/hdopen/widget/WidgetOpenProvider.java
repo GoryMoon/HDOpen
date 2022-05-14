@@ -6,12 +6,22 @@ import android.appwidget.AppWidgetProvider;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.RemoteViews;
 import android.widget.Toast;
 
+import androidx.work.BackoffPolicy;
+import androidx.work.Data;
+import androidx.work.ExistingWorkPolicy;
+import androidx.work.OneTimeWorkRequest;
+import androidx.work.OutOfQuotaPolicy;
+import androidx.work.PeriodicWorkRequest;
+import androidx.work.WorkManager;
+
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
 
 import se.gorymoon.hdopen.App;
 import se.gorymoon.hdopen.R;
@@ -21,6 +31,7 @@ import timber.log.Timber;
 
 public class WidgetOpenProvider extends AppWidgetProvider {
 
+    public static final String WIDGET_TAG = "hdopen_widget_work";
     public static final String DATA_FETCHED = "se.gorymoon.hdopen.DATA_FETCHED";
     public static final String CLICKED_EXTRA = "se.gorymoon.hdopen.CLICKED_WIDGET";
 
@@ -70,7 +81,8 @@ public class WidgetOpenProvider extends AppWidgetProvider {
         clickIntent.putExtra(CLICKED_EXTRA, true);
         broadcastIntent.putExtra(CLICKED_EXTRA, clicked);
 
-        PendingIntent intent = PendingIntent.getBroadcast(context, 0, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+        int flag = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) ? PendingIntent.FLAG_IMMUTABLE: 0;
+        PendingIntent intent = PendingIntent.getBroadcast(context, 0, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT | flag);
         views.setOnClickPendingIntent(R.id.button, intent);
 
         if (dataReceived) {
@@ -99,10 +111,25 @@ public class WidgetOpenProvider extends AppWidgetProvider {
             updating = false;
         } else {
             Timber.d("Updating status");
-            RemoteFetchService.enqueueWork(context, broadcastIntent);
+            updateWork(context, clicked, appWidgetId, appWidgetIds);
         }
         // Instruct the widget manager to update the widget
         appWidgetManager.updateAppWidget(appWidgetId, views);
+    }
+
+    public static void updateWork(Context context, boolean clicked, int appWidgetId, int[] appWidgetIds) {
+        OneTimeWorkRequest.Builder builder = new OneTimeWorkRequest.Builder(WidgetFetchWorker.class);
+        builder.addTag(WIDGET_TAG);
+
+        Data.Builder dataBuilder = new Data.Builder();
+        dataBuilder.putBoolean(CLICKED_EXTRA, clicked);
+        dataBuilder.putInt(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+        dataBuilder.putIntArray(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
+
+        builder.setInputData(dataBuilder.build());
+        builder.setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST);
+        builder.setBackoffCriteria(BackoffPolicy.LINEAR, PeriodicWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS);
+        WorkManager.getInstance(context).enqueueUniqueWork(WIDGET_TAG, ExistingWorkPolicy.REPLACE, builder.build());
     }
 
     @Override

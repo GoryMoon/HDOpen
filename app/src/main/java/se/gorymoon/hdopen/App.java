@@ -31,7 +31,7 @@ public class App extends Application {
         verifyLogging();
 
         if (PrefHandler.Pref.ENABLE_NOTIFICATIONS.get(false)) {
-            Boot.addCheckWork();
+            Boot.addCheckWork(getApplicationContext());
         }
 
         FirebaseMessaging.getInstance().subscribeToTopic("version");

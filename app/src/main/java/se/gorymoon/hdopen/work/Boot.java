@@ -19,14 +19,14 @@ public class Boot extends BroadcastReceiver {
     @Override
     public void onReceive(Context context, Intent intent) {
         if (Objects.equals(intent.getAction(), Intent.ACTION_BOOT_COMPLETED)) {
-            addCheckWork();
+            addCheckWork(context);
         }
     }
 
-    public static void addCheckWork() {
+    public static void addCheckWork(Context context) {
         PeriodicWorkRequest.Builder builder = new PeriodicWorkRequest.Builder(CheckWorker.class, PeriodicWorkRequest.MIN_PERIODIC_INTERVAL_MILLIS, TimeUnit.MILLISECONDS);
         builder.addTag(WORK_TAG);
         builder.setBackoffCriteria(BackoffPolicy.LINEAR, PeriodicWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS);
-        WorkManager.getInstance().enqueueUniquePeriodicWork(WORK_TAG, ExistingPeriodicWorkPolicy.KEEP, builder.build());
+        WorkManager.getInstance(context).enqueueUniquePeriodicWork(WORK_TAG, ExistingPeriodicWorkPolicy.REPLACE, builder.build());
     }
 }
