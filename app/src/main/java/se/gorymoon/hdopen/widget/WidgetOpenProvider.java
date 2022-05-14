@@ -45,7 +45,7 @@ public class WidgetOpenProvider extends AppWidgetProvider {
             Bundle extras = intent.getExtras();
             if (extras != null) {
                 int[] appWidgetIds = extras.getIntArray(AppWidgetManager.EXTRA_APPWIDGET_IDS);
-                boolean clicked = intent.getBooleanExtra(CLICKED_EXTRA, false);
+                boolean clicked = extras.getBoolean(CLICKED_EXTRA, false);
                 if (appWidgetIds != null && appWidgetIds.length > 0) {
                     for (int appWidgetId : appWidgetIds) {
                         updateAppWidget(context, AppWidgetManager.getInstance(context), appWidgetId, appWidgetIds, false, clicked);
@@ -74,15 +74,12 @@ public class WidgetOpenProvider extends AppWidgetProvider {
         Intent broadcastIntent = new Intent(context, WidgetOpenProvider.class);
         broadcastIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
         broadcastIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, appWidgetIds);
+        broadcastIntent.putExtra(CLICKED_EXTRA, true);
         broadcastIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
         broadcastIntent.setData(Uri.parse(broadcastIntent.toUri(Intent.URI_INTENT_SCHEME)));
 
-        Intent clickIntent = new Intent(broadcastIntent);
-        clickIntent.putExtra(CLICKED_EXTRA, true);
-        broadcastIntent.putExtra(CLICKED_EXTRA, clicked);
-
         int flag = (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) ? PendingIntent.FLAG_IMMUTABLE: 0;
-        PendingIntent intent = PendingIntent.getBroadcast(context, 0, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT | flag);
+        PendingIntent intent = PendingIntent.getBroadcast(context, 0, broadcastIntent, PendingIntent.FLAG_UPDATE_CURRENT | flag);
         views.setOnClickPendingIntent(R.id.button, intent);
 
         if (dataReceived) {
@@ -130,6 +127,7 @@ public class WidgetOpenProvider extends AppWidgetProvider {
         builder.setExpedited(OutOfQuotaPolicy.RUN_AS_NON_EXPEDITED_WORK_REQUEST);
         builder.setBackoffCriteria(BackoffPolicy.LINEAR, PeriodicWorkRequest.MIN_BACKOFF_MILLIS, TimeUnit.MILLISECONDS);
         WorkManager.getInstance(context).enqueueUniqueWork(WIDGET_TAG, ExistingWorkPolicy.REPLACE, builder.build());
+        WidgetOpenProvider.updating = true;
     }
 
     @Override
