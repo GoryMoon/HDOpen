@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.SystemClock;
 import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -34,6 +35,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final String DOWNLOAD_URL = "https://gorymoon.se/hdopen";
 
+    private long lastRefreshClickTime = 0;
     private ActivityMainBinding binding;
     private Tooltip tooltip;
     private Semver remoteVersion;
@@ -96,8 +98,11 @@ public class MainActivity extends AppCompatActivity {
 
     public void refresh() {
         if ((binding.progressBar.getVisibility() == View.INVISIBLE)) {
-            binding.progressBar.setVisibility(View.VISIBLE);
-            StatusRepository.getInstance().refreshData(getApplicationContext());
+            if (SystemClock.elapsedRealtime() - lastRefreshClickTime >= 1000) {
+                lastRefreshClickTime = SystemClock.elapsedRealtime();
+                binding.progressBar.setVisibility(View.VISIBLE);
+                StatusRepository.getInstance().refreshData(getApplicationContext());
+            }
         }
     }
 
